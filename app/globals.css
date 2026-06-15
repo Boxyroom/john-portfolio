@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  background: #12100e;
+  color: #f4ead8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(244, 234, 216, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 234, 216, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 20% 0%, rgba(200, 116, 52, 0.18), transparent 30rem),
+    linear-gradient(180deg, #12100e 0%, #1b1713 48%, #12100e 100%);
+  background-size: 72px 72px, 72px 72px, auto, auto;
+  color: #f4ead8;
+}
+
+::selection {
+  background: #c87434;
+  color: #12100e;
+}
+
+@layer base {
+  a,
+  button {
+    @apply transition duration-300 ease-out;
+  }
+
+  p {
+    @apply text-bone-muted;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply border-t border-bone/10 px-6 py-20 sm:py-24 lg:px-8;
+  }
+
+  .container-shell {
+    @apply mx-auto max-w-7xl;
+  }
+
+  .section-kicker {
+    @apply text-sm font-black uppercase tracking-[0.22em] text-copper-bright;
+  }
+
+  .section-heading {
+    @apply mt-4 max-w-3xl text-4xl font-black leading-tight text-bone sm:text-5xl;
+  }
+
+  .body-copy {
+    @apply text-base leading-7 text-bone-muted sm:text-lg sm:leading-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-sm bg-copper px-7 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-charcoal shadow-glow hover:-translate-y-0.5 hover:bg-copper-bright focus:outline-none focus:ring-2 focus:ring-copper-bright focus:ring-offset-2 focus:ring-offset-charcoal;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-sm border border-bone/20 px-7 py-3.5 text-sm font-black uppercase tracking-[0.12em] text-bone hover:-translate-y-0.5 hover:border-copper hover:bg-copper/10 focus:outline-none focus:ring-2 focus:ring-copper-bright focus:ring-offset-2 focus:ring-offset-charcoal;
+  }
+
+  .craft-card {
+    @apply rounded-sm border border-bone/10 bg-charcoal-2/80 p-7 shadow-inset backdrop-blur hover:-translate-y-1 hover:border-copper/40 hover:bg-charcoal-3/85;
+  }
+
+  .muted-rule {
+    @apply border-bone/10;
+  }
+}
