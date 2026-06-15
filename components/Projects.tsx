@@ -13,7 +13,7 @@ const projects = [
   {
     name: "NFT Marketplace",
     type: "Virtual Internship Project",
-    description: "Frontend marketplace experience built during an internship to display NFT data, support routed views, and ship a responsive interface through a professional Git workflow.",
+    description: "Frontend marketplace application developed during a virtual internship. Features routed views, reusable React components, dynamic data rendering, and responsive UI patterns.",
     technologies: ["React", "React Router", "Axios", "Firebase"],
     githubUrl: "https://github.com/Boxyroom/john-internship",
     liveUrl: "https://john-internship-ybmv.vercel.app/",
@@ -23,8 +23,8 @@ const projects = [
   },
   {
     name: "Summarist",
-    type: "Advanced Internship Project",
-    description: "Subscription-based reading platform built during an advanced frontend internship. Features modern application architecture, protected routes, premium content flows, user authentication, and payment integration.",
+    type: "Advanced Virtual Internship Project",
+    description: "Subscription-based reading platform built during an advanced virtual internship. Features modern application architecture, protected routes, premium content flows, user authentication, and payment integration.",
     technologies: ["Next.js", "TypeScript", "Stripe", "Firebase"],
     githubUrl: "https://github.com/Boxyroom/john-advanced-internship",
     liveUrl: "https://john-advanced-internship.vercel.app/",
