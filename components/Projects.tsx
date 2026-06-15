@@ -22,14 +22,15 @@ const projects = [
     previewDetail: "Marketplace product grid",
   },
   {
-    name: "Library React",
-    type: "React Application",
-    description: "Library-style React application focused on routed views, reusable interface pieces, and a structured frontend experience for browsing content.",
-    technologies: ["React", "React Router", "JavaScript", "FontAwesome"],
-    githubUrl: "https://github.com/Boxyroom/library-react",
-    previewAlt: "Placeholder preview for the Library React application",
-    previewLabel: "Library React",
-    previewDetail: "Content browsing layout",
+    name: "Summarist",
+    type: "Advanced Internship Project",
+    description: "Subscription-based reading platform built during an advanced frontend internship. Features modern application architecture, protected routes, premium content flows, user authentication, and payment integration.",
+    technologies: ["Next.js", "TypeScript", "Stripe", "Firebase"],
+    githubUrl: "https://github.com/Boxyroom/john-advanced-internship",
+    liveUrl: "https://john-advanced-internship.vercel.app/",
+    previewAlt: "Placeholder preview for the Summarist premium reading platform",
+    previewLabel: "SUMMARIST",
+    previewDetail: "Premium reading platform",
   },
 ];
 
