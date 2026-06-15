@@ -5,7 +5,7 @@ const projects = [
     description: "Movie discovery app that helps users search and browse titles from the TMDB API with live data, clear state handling, and a responsive component structure.",
     technologies: ["React", "TMDB API", "JavaScript", "CSS"],
     githubUrl: "https://github.com/Boxyroom/MovieLand",
-    liveUrl: "https://boxyroom.github.io/MovieLand",
+    liveUrl: "https://movie-land-sable-xi.vercel.app",
     previewAlt: "Placeholder preview for the MovieLand movie discovery application",
     previewLabel: "MovieLand",
     previewDetail: "Movie search interface",
@@ -117,8 +117,8 @@ export function Projects() {
                 aria-label={`View source code for ${project.name}`}
                 className="inline-flex items-center justify-center rounded-sm border border-copper/50 px-4 py-2.5 text-xs font-black uppercase tracking-[0.12em] text-copper-bright hover:bg-copper hover:text-charcoal"
                 href={project.githubUrl}
-                rel={project.githubUrl === "#" ? undefined : "noreferrer"}
-                target={project.githubUrl === "#" ? undefined : "_blank"}
+                rel="noopener noreferrer"
+                target="_blank"
               >
                 View Source
               </a>
@@ -127,8 +127,8 @@ export function Projects() {
                   aria-label={`View live demo for ${project.name}`}
                   className="inline-flex items-center justify-center rounded-sm bg-copper px-4 py-2.5 text-xs font-black uppercase tracking-[0.12em] text-charcoal hover:bg-copper-bright"
                   href={project.liveUrl}
-                  rel={project.liveUrl === "#" ? undefined : "noreferrer"}
-                  target={project.liveUrl === "#" ? undefined : "_blank"}
+                  rel="noopener noreferrer"
+                  target="_blank"
                 >
                   Live Demo
                 </a>
