@@ -16,6 +16,7 @@ const projects = [
     description: "Frontend marketplace experience built during an internship to display NFT data, support routed views, and ship a responsive interface through a professional Git workflow.",
     technologies: ["React", "React Router", "Axios", "Firebase"],
     githubUrl: "https://github.com/Boxyroom/john-internship",
+    liveUrl: "https://john-internship-ybmv.vercel.app/",
     previewAlt: "Placeholder preview for the NFT Marketplace internship project",
     previewLabel: "NFT Marketplace",
     previewDetail: "Marketplace product grid",
