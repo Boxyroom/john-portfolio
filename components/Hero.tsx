@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 const motionCards = [
   {
     label: "React",
@@ -34,7 +34,23 @@ const tabs = [
 ] as const;
 type HeroTab = (typeof tabs)[number];
 
-const labPanels = ["Motion choreography", "Pointer response", "Composable UI"];
+const labPanels = [
+  {
+    id: "pointer-response",
+    label: "Pointer response",
+    variant: "pointer-response",
+  },
+  {
+    id: "motion",
+    label: "Motion choreography",
+    variant: "default",
+  },
+  {
+    id: "click-move",
+    label: "Click and move",
+    variant: "click-move",
+  },
+] as const;
 
 const accordionItems = [
   {
@@ -55,7 +71,142 @@ const comingSoon = {
   Physics: "Natural-feeling UI motion driven by simple physics principles.",
 } satisfies Partial<Record<HeroTab, string>>;
 
+function PointerResponseCard() {
+  const [localPointer, setLocalPointer] = useState({
+    x: 0,
+    y: 0,
+    active: false,
+    width: 0,
+  });
+  const lines = ["POINTER", "RESPONSE"];
+  const characterWidth = 8;
+  const lineHeight = 18;
+
+  function getLetterTransform(line: string, lineIndex: number, index: number) {
+    const lineWidth = line.length * characterWidth;
+    const origin = {
+      x:
+        localPointer.width / 2 -
+        lineWidth / 2 +
+        index * characterWidth +
+        characterWidth / 2,
+      y: lineIndex * lineHeight + lineHeight / 2,
+    };
+    const dx = origin.x - localPointer.x;
+    const dy = origin.y - localPointer.y;
+    const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+    const force = localPointer.active
+      ? Math.max(0, 1 - distance / 80) * 24
+      : 0;
+
+    return `translate(${(dx / distance) * force}px, ${
+      (dy / distance) * force
+    }px)`;
+  }
+
+  return (
+    <span
+      className="block text-center"
+      data-pointer-active={localPointer.active}
+      data-pointer-x={localPointer.x}
+      data-pointer-y={localPointer.y}
+      onMouseLeave={() =>
+        setLocalPointer((current) => ({ ...current, active: false }))
+      }
+      onMouseMove={(event) => {
+        const rect = event.currentTarget.getBoundingClientRect();
+        setLocalPointer({
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top,
+          active: true,
+          width: rect.width,
+        });
+      }}
+    >
+      {lines.map((line, lineIndex) => (
+        <span className="block" key={line}>
+          {line.split("").map((character, characterIndex) => {
+            return (
+              <span
+                className="inline-block transition-transform duration-300 ease-out"
+                key={`${line}-${character}-${characterIndex}`}
+                style={{
+                  transform: getLetterTransform(
+                    line,
+                    lineIndex,
+                    characterIndex,
+                  ),
+                }}
+              >
+                {character}
+              </span>
+            );
+          })}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function ClickAndMoveCard({
+  baseTransform,
+  className,
+  resetKey,
+}: {
+  baseTransform: string;
+  className?: string;
+  resetKey: number;
+}) {
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [dragStart, setDragStart] = useState({
+    pointerX: 0,
+    pointerY: 0,
+    offsetX: 0,
+    offsetY: 0,
+  });
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    setOffset({ x: 0, y: 0 });
+  }, [resetKey]);
+
+  return (
+    <div
+      className={`cursor-grab rounded-sm border border-bone/10 bg-charcoal/55 p-4 text-center text-sm font-bold text-bone-muted hover:border-copper/50 hover:text-bone active:cursor-grabbing ${className ?? ""} ${
+        isDragging ? "" : "transition duration-300"
+      }`}
+      onPointerDown={(event) => {
+        event.currentTarget.setPointerCapture(event.pointerId);
+        setIsDragging(true);
+        setDragStart({
+          pointerX: event.clientX,
+          pointerY: event.clientY,
+          offsetX: offset.x,
+          offsetY: offset.y,
+        });
+      }}
+      onPointerMove={(event) => {
+        if (!isDragging) {
+          return;
+        }
+
+        setOffset({
+          x: dragStart.offsetX + event.clientX - dragStart.pointerX,
+          y: dragStart.offsetY + event.clientY - dragStart.pointerY,
+        });
+      }}
+      onPointerUp={() => setIsDragging(false)}
+      style={{
+        transform: `${baseTransform} translate(${offset.x}px, ${offset.y}px)`,
+      }}
+    >
+      Click&Move
+    </div>
+  );
+}
+
 export function Hero() {
+  const magneticButtonRef = useRef<HTMLButtonElement>(null);
   const [activeTab, setActiveTab] = useState<HeroTab>("Motion");
   const [panelVisible, setPanelVisible] = useState(true);
   const [motionPhase, setMotionPhase] = useState<
@@ -66,6 +217,15 @@ export function Hero() {
   const [componentTab, setComponentTab] =
     useState<(typeof componentTabs)[number]>("Preview");
   const [enabled, setEnabled] = useState(true);
+  const [magneticOffset, setMagneticOffset] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [magneticProximity, setMagneticProximity] = useState(0);
+  const [orbitAnchorId, setOrbitAnchorId] = useState<string | null>(null);
+  const [orbitAngle, setOrbitAngle] = useState(0);
+  const [choreographyResetKey, setChoreographyResetKey] = useState(0);
+  const orbitStartedAtRef = useRef(0);
 
   useEffect(() => {
     if (activeTab !== "Motion") {
@@ -84,6 +244,27 @@ export function Hero() {
     return () => window.clearInterval(interval);
   }, [activeTab]);
 
+  useEffect(() => {
+    if (orbitAnchorId !== "motion") {
+      return;
+    }
+
+    let frameId = 0;
+
+    function tick(time: number) {
+      if (orbitStartedAtRef.current === 0) {
+        orbitStartedAtRef.current = time;
+      }
+
+      setOrbitAngle(((time - orbitStartedAtRef.current) / 1600) * Math.PI * 2);
+      frameId = window.requestAnimationFrame(tick);
+    }
+
+    frameId = window.requestAnimationFrame(tick);
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, [orbitAnchorId]);
+
   function selectTab(tab: HeroTab) {
     if (tab === activeTab) {
       return;
@@ -94,6 +275,34 @@ export function Hero() {
       setActiveTab(tab);
       setPanelVisible(true);
     }, 140);
+  }
+
+  function getOrbitTransform(panelId: string) {
+    if (orbitAnchorId !== "motion") {
+      return "translate(0px, 0px)";
+    }
+
+    if (
+      panelId !== "pointer-response" &&
+      panelId !== "click-move" &&
+      panelId !== "magnetic-control"
+    ) {
+      return "translate(0px, 0px)";
+    }
+
+    const amplitude = panelId === "magnetic-control" ? 1 : 1.32;
+
+    return `translate(${Math.sin(orbitAngle) * 104 * amplitude}px, ${
+      Math.sin(orbitAngle * 2) * 52 * amplitude
+    }px) rotate(${Math.sin(orbitAngle) * 7 * amplitude}deg) scale(${
+      1 + Math.sin(orbitAngle * 2) * 0.1 * amplitude
+    })`;
+  }
+
+  function endChoreography() {
+    setOrbitAnchorId(null);
+    setMagneticOffset({ x: 0, y: 0 });
+    setChoreographyResetKey((key) => key + 1);
   }
 
   return (
@@ -309,6 +518,40 @@ export function Hero() {
                         x: ((event.clientX - rect.left) / rect.width) * 100,
                         y: ((event.clientY - rect.top) / rect.height) * 100,
                       });
+
+                      const magneticButton = magneticButtonRef.current;
+
+                      if (magneticButton) {
+                        const buttonRect =
+                          magneticButton.getBoundingClientRect();
+                        const nearestX = Math.max(
+                          buttonRect.left,
+                          Math.min(event.clientX, buttonRect.right),
+                        );
+                        const nearestY = Math.max(
+                          buttonRect.top,
+                          Math.min(event.clientY, buttonRect.bottom),
+                        );
+                        const dx = event.clientX - nearestX;
+                        const dy = event.clientY - nearestY;
+                        const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+                        const attractionRadius = 90;
+                        const proximity = Math.max(
+                          0,
+                          1 - distance / attractionRadius,
+                        );
+
+                        setMagneticProximity(proximity);
+
+                        if (distance < attractionRadius) {
+                          const pull = proximity * 3;
+
+                          setMagneticOffset((current) => ({
+                            x: current.x + (dx / distance) * pull,
+                            y: current.y + (dy / distance) * pull,
+                          }));
+                        }
+                      }
                     }}
                     style={{
                       background: `radial-gradient(circle at ${pointer.x}% ${pointer.y}%, rgba(200,116,52,0.34), rgba(27,23,19,0.7) 34%, rgba(18,16,14,0.88) 70%)`,
@@ -325,28 +568,83 @@ export function Hero() {
                         transform: "translate(-50%, -50%)",
                       }}
                     />
-                    <div className="relative mt-14 grid grid-cols-2 gap-3">
-                      {labPanels.map((panel, index) => (
-                        <div
-                          className="rounded-sm border border-bone/10 bg-charcoal/55 p-4 text-sm font-bold text-bone-muted transition duration-300 hover:border-copper/50 hover:text-bone"
-                          key={panel}
-                          style={{
-                            transform: `translate(${(pointer.x - 50) / (18 + index * 5)}px, ${(pointer.y - 50) / (24 + index * 5)}px)`,
-                          }}
-                        >
-                          {panel}
-                        </div>
-                      ))}
-                    </div>
-                    <button
-                      className="relative mt-8 rounded-sm border border-copper/50 px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-copper-bright transition hover:bg-copper hover:text-charcoal"
-                      style={{
-                        transform: `translate(${(pointer.x - 50) / 18}px, ${(pointer.y - 50) / 22}px)`,
-                      }}
-                      type="button"
+                    <div
+                      className="relative mt-10 grid grid-cols-2 items-center gap-x-6 gap-y-5"
+                      data-orbit-anchor={orbitAnchorId ?? undefined}
                     >
-                      Magnetic control
-                    </button>
+                      {labPanels.map((panel, index) => {
+                        const baseTransform = `translate(${(pointer.x - 50) / (18 + index * 5)}px, ${(pointer.y - 50) / (24 + index * 5)}px) ${getOrbitTransform(panel.id)}`;
+                        const layoutClass =
+                          panel.id === "pointer-response"
+                            ? "col-span-2 w-[180px] justify-self-center"
+                            : panel.id === "motion"
+                              ? "col-span-2 w-[220px] cursor-pointer justify-self-center rounded-full border-copper/40 bg-charcoal-2/80 px-6 py-4 text-center text-copper-bright shadow-glow"
+                              : "col-start-1 w-[145px] justify-self-start";
+
+                        if (panel.variant === "click-move") {
+                          return (
+                            <ClickAndMoveCard
+                              baseTransform={baseTransform}
+                              className={layoutClass}
+                              key={panel.id}
+                              resetKey={choreographyResetKey}
+                            />
+                          );
+                        }
+
+                        return (
+                          <div
+                            className={`rounded-sm border border-bone/10 bg-charcoal/55 p-4 text-sm font-bold text-bone-muted transition duration-300 hover:border-copper/50 hover:text-bone ${layoutClass}`}
+                            key={panel.id}
+                            onPointerDown={
+                              panel.id === "motion"
+                                ? (event) => {
+                                    orbitStartedAtRef.current = 0;
+                                    setOrbitAngle(0);
+                                    setOrbitAnchorId("motion");
+                                    event.currentTarget.setPointerCapture(
+                                      event.pointerId,
+                                    );
+                                  }
+                                : undefined
+                            }
+                            onPointerUp={
+                              panel.id === "motion"
+                                ? () => endChoreography()
+                                : undefined
+                            }
+                            onPointerCancel={
+                              panel.id === "motion"
+                                ? () => endChoreography()
+                                : undefined
+                            }
+                            style={{
+                              transform: baseTransform,
+                            }}
+                          >
+                            {panel.variant === "pointer-response" ? (
+                              <PointerResponseCard />
+                            ) : (
+                              panel.label
+                            )}
+                          </div>
+                        );
+                      })}
+                      <button
+                        className="col-start-2 w-[165px] justify-self-end rounded-sm border border-copper/50 px-5 py-3 text-xs font-black uppercase tracking-[0.14em] text-copper-bright transition hover:bg-copper hover:text-charcoal"
+                        ref={magneticButtonRef}
+                        style={{
+                          boxShadow:
+                            magneticProximity > 0
+                              ? `0 0 ${8 + magneticProximity * 28}px rgba(226, 149, 75, ${0.12 + magneticProximity * 0.48})`
+                              : undefined,
+                          transform: `${getOrbitTransform("magnetic-control")} translate(${magneticOffset.x}px, ${magneticOffset.y}px)`,
+                        }}
+                        type="button"
+                      >
+                        Magnetic control
+                      </button>
+                    </div>
                   </div>
                 )}
 
