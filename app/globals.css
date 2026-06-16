@@ -22,9 +22,17 @@ body {
   background:
     linear-gradient(rgba(244, 234, 216, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(244, 234, 216, 0.025) 1px, transparent 1px),
-    radial-gradient(circle at 20% 0%, rgba(200, 116, 52, 0.18), transparent 30rem),
+    radial-gradient(
+      circle at 20% 0%,
+      rgba(200, 116, 52, 0.18),
+      transparent 30rem
+    ),
     linear-gradient(180deg, #12100e 0%, #1b1713 48%, #12100e 100%);
-  background-size: 72px 72px, 72px 72px, auto, auto;
+  background-size:
+    72px 72px,
+    72px 72px,
+    auto,
+    auto;
   color: #f4ead8;
 }
 
@@ -79,5 +87,63 @@ body {
 
   .muted-rule {
     @apply border-bone/10;
+  }
+}
+
+.animate-card-vibrate {
+  animation: card-vibrate 90ms linear infinite;
+  will-change: transform;
+}
+
+@keyframes vibrate {
+  0% {
+    transform: translate(0px, 0px);
+  }
+
+  25% {
+    transform: translate(1px, -1px);
+  }
+
+  50% {
+    transform: translate(-1px, 1px);
+  }
+
+  75% {
+    transform: translate(1px, 1px);
+  }
+
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes card-vibrate {
+  0%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+
+  15% {
+    transform: translate(2px, -1px);
+  }
+
+  30% {
+    transform: translate(-2px, 2px);
+  }
+
+  45% {
+    transform: translate(2px, 2px);
+  }
+
+  60% {
+    transform: translate(-2px, -1px);
+  }
+
+  75% {
+    transform: translate(1px, 2px);
+  }
+
+  90% {
+    transform: translate(-1px, -2px);
   }
 }
