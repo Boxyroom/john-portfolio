@@ -380,8 +380,8 @@ function ClickAndMoveCard({
 
 function EffectsShowcase() {
   return (
-    <div className="effects-scene relative flex h-full min-h-0 w-full items-center justify-center overflow-hidden p-3 sm:min-h-[320px] sm:p-4">
-      <div className="effects-scene-field relative flex h-full min-h-0 w-full items-center justify-center overflow-hidden rounded-sm sm:min-h-[300px]">
+    <div className="effects-scene relative flex h-full min-h-[260px] w-full items-center justify-center overflow-hidden p-3 sm:min-h-[320px] sm:p-4">
+      <div className="effects-scene-field relative flex h-full min-h-[240px] w-full items-center justify-center overflow-hidden rounded-sm sm:min-h-[300px]">
         <div className="effects-scene-atmosphere pointer-events-none absolute inset-0 transition duration-700" />
         <div className="effects-scene-haze pointer-events-none absolute left-1/2 top-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full sm:size-[28rem]" />
 
@@ -1092,7 +1092,7 @@ export function Hero() {
       </div>
 
       <div className="relative lg:-mt-5 overflow-hidden rounded-sm border border-bone/10 bg-charcoal-2 p-4 shadow-glow">
-        <div className="aspect-[5/4] lg:aspect-[9/10] rounded-sm border border-bone/10 bg-[linear-gradient(145deg,#28221c_0%,#20343a_45%,#c87434_100%)] p-6 text-bone">
+        <div className="aspect-[4/5] rounded-sm border border-bone/10 bg-[linear-gradient(145deg,#28221c_0%,#20343a_45%,#c87434_100%)] p-6 text-bone sm:aspect-[5/4] lg:aspect-[9/10]">
           <div className="flex h-full flex-col">
             <div className="flex items-center justify-between text-xs font-bold uppercase tracking-[0.12em] text-bone/70">
               <span>Frontend Lab</span>
