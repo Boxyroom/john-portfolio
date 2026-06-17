@@ -27,7 +27,7 @@ const motionCards = [
 const tabs = [
   "Motion",
   "Interaction",
-  "Components",
+  "Scroll",
   "Effects",
   "SVG",
   "Physics",
@@ -51,19 +51,6 @@ const labPanels = [
     variant: "click-move",
   },
 ] as const;
-
-const accordionItems = [
-  {
-    title: "Reusable patterns",
-    detail: "Small pieces composed into dependable interfaces.",
-  },
-  {
-    title: "Stateful behavior",
-    detail: "Controls respond clearly to user intent.",
-  },
-];
-
-const componentTabs = ["Preview", "State", "API"] as const;
 
 const comingSoon = {
   Effects: "Advanced visual effects for polished interface moments.",
@@ -95,9 +82,7 @@ function PointerResponseCard() {
     const dx = origin.x - localPointer.x;
     const dy = origin.y - localPointer.y;
     const distance = Math.sqrt(dx * dx + dy * dy) || 1;
-    const force = localPointer.active
-      ? Math.max(0, 1 - distance / 80) * 24
-      : 0;
+    const force = localPointer.active ? Math.max(0, 1 - distance / 80) * 24 : 0;
 
     return `translate(${(dx / distance) * force}px, ${
       (dy / distance) * force
@@ -207,16 +192,21 @@ function ClickAndMoveCard({
 
 export function Hero() {
   const magneticButtonRef = useRef<HTMLButtonElement>(null);
+  const scrollCarouselRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<HeroTab>("Motion");
   const [panelVisible, setPanelVisible] = useState(true);
   const [motionPhase, setMotionPhase] = useState<
     "float" | "merge" | "bang" | "app" | "dissolve"
   >("float");
   const [pointer, setPointer] = useState({ x: 50, y: 45 });
-  const [activeAccordion, setActiveAccordion] = useState(0);
-  const [componentTab, setComponentTab] =
-    useState<(typeof componentTabs)[number]>("Preview");
-  const [enabled, setEnabled] = useState(true);
+  const [scrollLab, setScrollLab] = useState({
+    progress: 0,
+    scrollTop: 0,
+  });
+  const [scrollCarousel, setScrollCarousel] = useState({
+    scrollLeft: 0,
+    width: 0,
+  });
   const [magneticOffset, setMagneticOffset] = useState({
     x: 0,
     y: 0,
@@ -226,6 +216,20 @@ export function Hero() {
   const [orbitAngle, setOrbitAngle] = useState(0);
   const [choreographyResetKey, setChoreographyResetKey] = useState(0);
   const orbitStartedAtRef = useRef(0);
+  const carouselItemWidth = 190;
+  const carouselItemGap = 32;
+  const carouselSequenceWidth = 3 * (carouselItemWidth + carouselItemGap);
+  const carouselItems = [
+    "Welcome",
+    "Imagine",
+    "Create",
+    "Welcome",
+    "Imagine",
+    "Create",
+    "Welcome",
+    "Imagine",
+    "Create",
+  ];
 
   useEffect(() => {
     if (activeTab !== "Motion") {
@@ -264,6 +268,16 @@ export function Hero() {
 
     return () => window.cancelAnimationFrame(frameId);
   }, [orbitAnchorId]);
+
+  useEffect(() => {
+    if (activeTab === "Scroll" && scrollCarouselRef.current) {
+      scrollCarouselRef.current.scrollLeft = carouselSequenceWidth;
+      setScrollCarousel({
+        scrollLeft: carouselSequenceWidth,
+        width: scrollCarouselRef.current.clientWidth,
+      });
+    }
+  }, [activeTab, carouselSequenceWidth]);
 
   function selectTab(tab: HeroTab) {
     if (tab === activeTab) {
@@ -304,6 +318,25 @@ export function Hero() {
     setMagneticOffset({ x: 0, y: 0 });
     setChoreographyResetKey((key) => key + 1);
   }
+
+  function getCarouselFocus(index: number) {
+    const itemCenter =
+      index * (carouselItemWidth + carouselItemGap) + carouselItemWidth / 2;
+    const viewportCenter = scrollCarousel.scrollLeft + scrollCarousel.width / 2;
+    const distance = Math.abs(itemCenter - viewportCenter);
+    const range = scrollCarousel.width * 0.5 || 1;
+
+    return Math.min(1, Math.max(0, 1 - distance / range));
+  }
+
+  const helloSectionTop = 260;
+  const helloSectionHeight = 180;
+  const scrollViewportHeight = 320;
+  const helloCenter = helloSectionTop + helloSectionHeight / 2;
+  const helloCenterInViewport = helloCenter - scrollLab.scrollTop;
+  const helloIsActive =
+    helloCenterInViewport > scrollViewportHeight * 0.08 &&
+    helloCenterInViewport < scrollViewportHeight * 0.92;
 
   return (
     <section className="container-shell grid min-h-[calc(100vh-73px)] items-start gap-8 px-6 py-8 lg:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
@@ -648,83 +681,144 @@ export function Hero() {
                   </div>
                 )}
 
-                {activeTab === "Components" && (
-                  <div className="grid w-full gap-4 rounded-sm border border-bone/10 bg-charcoal/65 p-5 shadow-inset">
-                    <div className="flex items-center justify-between gap-4">
-                      <p className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
-                        Component playground
-                      </p>
-                      <button
-                        aria-label="Toggle playground state"
-                        aria-pressed={enabled}
-                        className={`flex h-6 w-11 items-center rounded-full border border-bone/10 p-1 transition ${
-                          enabled ? "bg-copper" : "bg-charcoal-3"
-                        }`}
-                        onClick={() => setEnabled((current) => !current)}
-                        type="button"
-                      >
-                        <span
-                          className="size-4 rounded-full bg-bone transition-transform duration-300"
+                {activeTab === "Scroll" && (
+                  <div className="relative w-full overflow-hidden rounded-sm border border-bone/10 bg-charcoal/65 shadow-inset">
+                    <div className="absolute left-0 top-0 z-10 h-1 w-full bg-charcoal-3">
+                      <div
+                        className="h-full bg-copper-bright transition-[width] duration-150"
+                        style={{ width: `${scrollLab.progress * 100}%` }}
+                      />
+                    </div>
+
+                    <div
+                      className="h-[320px] overflow-y-auto p-5"
+                      onScroll={(event) => {
+                        const target = event.currentTarget;
+                        const maxScroll =
+                          target.scrollHeight - target.clientHeight;
+
+                        setScrollLab({
+                          progress:
+                            maxScroll > 0 ? target.scrollTop / maxScroll : 0,
+                          scrollTop: target.scrollTop,
+                        });
+
+                      }}
+                    >
+                      <section className="relative flex min-h-[260px] flex-col justify-center overflow-hidden rounded-sm border border-bone/10 bg-charcoal-2/70 p-5">
+                        <div
+                          className="pointer-events-none absolute inset-x-[-20%] top-8 h-20 rounded-full bg-blueprint/70 blur-sm"
                           style={{
-                            transform: enabled
-                              ? "translateX(20px)"
-                              : "translateX(0)",
+                            transform: `translateY(${scrollLab.scrollTop * 0.18}px)`,
                           }}
                         />
-                      </button>
-                    </div>
+                        <div
+                          className="pointer-events-none absolute left-10 top-20 h-24 w-24 rounded-sm border border-copper/40 bg-copper/20"
+                          style={{
+                            transform: `translateY(${scrollLab.scrollTop * 0.38}px) rotate(12deg)`,
+                          }}
+                        />
+                        <div
+                          className="pointer-events-none absolute bottom-8 right-8 h-16 w-36 rounded-sm border border-bone/15 bg-bone/10"
+                          style={{
+                            transform: `translateY(${scrollLab.scrollTop * 0.65}px) rotate(-8deg)`,
+                          }}
+                        />
 
-                    <div className="grid grid-cols-3 overflow-hidden rounded-sm border border-bone/10 text-xs font-black uppercase tracking-[0.12em]">
-                      {componentTabs.map((tab) => (
-                        <button
-                          className={`px-2 py-3 transition ${
-                            componentTab === tab
-                              ? "bg-copper text-charcoal"
-                              : "bg-charcoal-2/70 text-bone-muted hover:text-bone"
-                          }`}
-                          key={tab}
-                          onClick={() => setComponentTab(tab)}
-                          type="button"
+                        <div className="relative z-10">
+                          <p className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
+                            Scroll Lab
+                          </p>
+                          <p className="mt-4 text-3xl font-black text-bone">
+                            Miniature webpage
+                          </p>
+                          <p className="mt-4 text-sm font-semibold leading-6 text-bone-muted">
+                            Scroll inside this panel to drive the progress bar.
+                          </p>
+                        </div>
+                      </section>
+
+                      <section className="flex min-h-[180px] items-center p-5">
+                        <div
+                          className="w-full text-center transition duration-1000 ease-out"
+                          style={{
+                            opacity: helloIsActive ? 1 : 0,
+                            transform: helloIsActive
+                              ? "translateY(0px)"
+                              : "translateY(32px)",
+                            transitionDuration: helloIsActive
+                              ? "1800ms"
+                              : "300ms",
+                          }}
                         >
-                          {tab}
-                        </button>
-                      ))}
-                    </div>
+                          <p className="text-6xl font-black text-bone">Hello</p>
+                        </div>
+                      </section>
 
-                    <div className="space-y-2">
-                      {accordionItems.map((item, index) => (
-                        <button
-                          className="w-full rounded-sm border border-bone/10 bg-charcoal-2/70 p-3 text-left transition hover:border-copper/40"
-                          key={item.title}
-                          onClick={() => setActiveAccordion(index)}
-                          type="button"
+                      <section className="mt-24 min-h-[520px] p-5">
+                        <div className="sticky top-5 text-center">
+                          <p className="text-5xl font-black text-copper-bright">
+                            IDEA
+                          </p>
+                        </div>
+                        <div className="mt-16 space-y-10 pb-8 text-center">
+                          {["DESIGN", "BUILD", "LAUNCH"].map((step) => (
+                            <div key={step}>
+                              <p className="text-4xl font-black text-bone/50">
+                                ↓
+                              </p>
+                              <p className="mt-4 text-4xl font-black tracking-[0.12em] text-bone">
+                                {step}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+
+                      <section className="mt-4 py-6">
+                        <div
+                          className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                          onScroll={(event) => {
+                            const target = event.currentTarget;
+
+                            if (target.scrollLeft < carouselSequenceWidth / 2) {
+                              target.scrollLeft += carouselSequenceWidth;
+                            }
+
+                            if (
+                              target.scrollLeft >
+                              carouselSequenceWidth * 1.5
+                            ) {
+                              target.scrollLeft -= carouselSequenceWidth;
+                            }
+
+                            setScrollCarousel({
+                              scrollLeft: target.scrollLeft,
+                              width: target.clientWidth,
+                            });
+                          }}
+                          ref={scrollCarouselRef}
                         >
-                          <span className="flex items-center justify-between text-sm font-black text-bone">
-                            {item.title}
-                            <span className="text-copper-bright">
-                              {activeAccordion === index ? "-" : "+"}
-                            </span>
-                          </span>
-                          <span
-                            className={`block overflow-hidden text-sm leading-6 text-bone-muted transition-all duration-300 ${
-                              activeAccordion === index
-                                ? "mt-2 max-h-20 opacity-100"
-                                : "max-h-0 opacity-0"
-                            }`}
-                          >
-                            {item.detail}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
+                          <div className="flex w-max gap-8 py-6">
+                            {carouselItems.map((item, index) => {
+                              const focus = getCarouselFocus(index);
 
-                    <div className="rounded-sm border border-bone/10 bg-charcoal-2/70 p-4">
-                      <p className="text-xs font-black uppercase tracking-[0.16em] text-steel">
-                        Active panel
-                      </p>
-                      <p className="mt-2 text-lg font-black text-bone">
-                        {componentTab} / {enabled ? "Enabled" : "Disabled"}
-                      </p>
+                              return (
+                                <p
+                                  className="w-[190px] shrink-0 text-center text-4xl font-black text-bone transition-opacity duration-150"
+                                  key={`${item}-${index}`}
+                                  style={{
+                                    opacity: 0.12 + focus * 0.88,
+                                  }}
+                                >
+                                  {item}
+                                </p>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </section>
+
                     </div>
                   </div>
                 )}
