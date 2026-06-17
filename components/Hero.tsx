@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 const motionCards = [
   {
     label: "React",
@@ -25,10 +25,10 @@ const motionCards = [
 ] as const;
 
 const tabs = [
+  "Effects",
   "Motion",
   "Interaction",
   "Scroll",
-  "Effects",
   "SVG",
   "Physics",
 ] as const;
@@ -53,10 +53,103 @@ const labPanels = [
 ] as const;
 
 const comingSoon = {
-  Effects: "Advanced visual effects for polished interface moments.",
   SVG: "Interactive vector systems, icons, and animated diagrams.",
   Physics: "Natural-feeling UI motion driven by simple physics principles.",
 } satisfies Partial<Record<HeroTab, string>>;
+
+const effectParticles = [
+  ["4%", "13%", 1.6, "rgba(244, 234, 216, 0.36)", "28s", "-2s", "28px", "-42px", 0.34],
+  ["6%", "37%", 2.7, "rgba(226, 149, 75, 0.42)", "24s", "-9s", "-34px", "24px", 0.44],
+  ["8%", "62%", 1.9, "rgba(244, 234, 216, 0.34)", "31s", "-18s", "42px", "-20px", 0.32],
+  ["10%", "84%", 3.1, "rgba(200, 116, 52, 0.38)", "27s", "-5s", "-38px", "-32px", 0.42],
+  ["13%", "22%", 2.1, "rgba(226, 149, 75, 0.48)", "33s", "-15s", "36px", "28px", 0.5],
+  ["15%", "49%", 1.7, "rgba(244, 234, 216, 0.33)", "23s", "-7s", "-30px", "46px", 0.31],
+  ["17%", "71%", 3.4, "rgba(226, 149, 75, 0.39)", "29s", "-21s", "26px", "-48px", 0.43],
+  ["19%", "91%", 1.5, "rgba(244, 234, 216, 0.37)", "38s", "-12s", "44px", "-24px", 0.3],
+  ["22%", "11%", 2.6, "rgba(200, 116, 52, 0.42)", "26s", "-24s", "-46px", "36px", 0.46],
+  ["24%", "35%", 1.8, "rgba(244, 234, 216, 0.36)", "32s", "-8s", "28px", "-54px", 0.34],
+  ["26%", "58%", 2.9, "rgba(226, 149, 75, 0.43)", "25s", "-14s", "-48px", "26px", 0.48],
+  ["28%", "79%", 1.6, "rgba(244, 234, 216, 0.32)", "35s", "-28s", "34px", "38px", 0.29],
+  ["31%", "18%", 3.5, "rgba(200, 116, 52, 0.36)", "30s", "-11s", "-32px", "-44px", 0.4],
+  ["33%", "43%", 2, "rgba(244, 234, 216, 0.39)", "39s", "-19s", "48px", "24px", 0.36],
+  ["35%", "67%", 3.1, "rgba(226, 149, 75, 0.38)", "24s", "-4s", "-42px", "42px", 0.44],
+  ["37%", "87%", 1.7, "rgba(244, 234, 216, 0.35)", "34s", "-27s", "30px", "-50px", 0.31],
+  ["40%", "15%", 1.5, "rgba(244, 234, 216, 0.34)", "36s", "-23s", "50px", "-28px", 0.3],
+  ["42%", "31%", 2.4, "rgba(226, 149, 75, 0.5)", "27s", "-13s", "-36px", "48px", 0.52],
+  ["44%", "51%", 3.4, "rgba(244, 234, 216, 0.37)", "33s", "-20s", "32px", "-40px", 0.38],
+  ["46%", "74%", 1.8, "rgba(200, 116, 52, 0.42)", "28s", "-6s", "-50px", "-26px", 0.43],
+  ["49%", "9%", 2.2, "rgba(244, 234, 216, 0.4)", "31s", "-25s", "38px", "30px", 0.36],
+  ["50%", "27%", 1.6, "rgba(226, 149, 75, 0.47)", "22s", "-10s", "-24px", "-52px", 0.49],
+  ["51%", "59%", 2.7, "rgba(244, 234, 216, 0.36)", "37s", "-31s", "46px", "28px", 0.35],
+  ["52%", "89%", 1.9, "rgba(200, 116, 52, 0.39)", "30s", "-16s", "-44px", "-34px", 0.41],
+  ["55%", "20%", 3.2, "rgba(244, 234, 216, 0.38)", "26s", "-18s", "30px", "50px", 0.39],
+  ["57%", "41%", 1.7, "rgba(226, 149, 75, 0.45)", "40s", "-30s", "-52px", "-22px", 0.46],
+  ["59%", "64%", 3.6, "rgba(200, 116, 52, 0.4)", "25s", "-9s", "40px", "36px", 0.45],
+  ["61%", "83%", 2, "rgba(244, 234, 216, 0.35)", "32s", "-21s", "-34px", "-48px", 0.34],
+  ["64%", "12%", 1.8, "rgba(244, 234, 216, 0.41)", "29s", "-4s", "-42px", "32px", 0.37],
+  ["66%", "34%", 2.8, "rgba(226, 149, 75, 0.42)", "36s", "-29s", "46px", "-36px", 0.45],
+  ["68%", "55%", 1.5, "rgba(244, 234, 216, 0.32)", "41s", "-35s", "-28px", "54px", 0.28],
+  ["70%", "77%", 3.3, "rgba(226, 149, 75, 0.38)", "27s", "-8s", "34px", "-50px", 0.42],
+  ["73%", "18%", 2, "rgba(244, 234, 216, 0.36)", "35s", "-17s", "-50px", "-24px", 0.34],
+  ["75%", "39%", 3, "rgba(200, 116, 52, 0.43)", "30s", "-22s", "28px", "46px", 0.46],
+  ["77%", "61%", 1.9, "rgba(244, 234, 216, 0.34)", "38s", "-12s", "-38px", "-40px", 0.32],
+  ["79%", "86%", 2.7, "rgba(226, 149, 75, 0.44)", "28s", "-27s", "52px", "22px", 0.47],
+  ["82%", "10%", 1.6, "rgba(244, 234, 216, 0.39)", "33s", "-5s", "-26px", "48px", 0.35],
+  ["84%", "28%", 2.5, "rgba(226, 149, 75, 0.37)", "42s", "-33s", "38px", "-30px", 0.39],
+  ["86%", "50%", 1.8, "rgba(244, 234, 216, 0.35)", "34s", "-18s", "-54px", "28px", 0.33],
+  ["88%", "70%", 3.4, "rgba(200, 116, 52, 0.39)", "26s", "-7s", "32px", "-54px", 0.43],
+  ["91%", "21%", 1.9, "rgba(244, 234, 216, 0.4)", "37s", "-28s", "-44px", "38px", 0.36],
+  ["93%", "43%", 3, "rgba(226, 149, 75, 0.43)", "29s", "-13s", "34px", "42px", 0.47],
+  ["95%", "64%", 1.6, "rgba(244, 234, 216, 0.31)", "40s", "-24s", "-30px", "-46px", 0.29],
+  ["97%", "83%", 2.3, "rgba(200, 116, 52, 0.36)", "31s", "-3s", "42px", "-26px", 0.38],
+  ["5%", "93%", 1.8, "rgba(226, 149, 75, 0.34)", "43s", "-38s", "-36px", "30px", 0.32],
+  ["12%", "6%", 2.2, "rgba(244, 234, 216, 0.35)", "45s", "-33s", "40px", "26px", 0.31],
+  ["21%", "52%", 1.5, "rgba(244, 234, 216, 0.33)", "44s", "-30s", "24px", "-46px", 0.29],
+  ["29%", "96%", 2.4, "rgba(226, 149, 75, 0.36)", "34s", "-20s", "-48px", "-28px", 0.38],
+  ["38%", "6%", 1.7, "rgba(244, 234, 216, 0.36)", "39s", "-14s", "46px", "34px", 0.33],
+  ["45%", "94%", 2.1, "rgba(226, 149, 75, 0.35)", "28s", "-24s", "-40px", "-44px", 0.37],
+  ["54%", "5%", 1.4, "rgba(244, 234, 216, 0.34)", "42s", "-17s", "28px", "52px", 0.28],
+  ["63%", "95%", 2, "rgba(244, 234, 216, 0.32)", "36s", "-10s", "-32px", "-50px", 0.3],
+  ["72%", "96%", 1.6, "rgba(226, 149, 75, 0.33)", "47s", "-39s", "48px", "-22px", 0.31],
+  ["81%", "94%", 2.4, "rgba(244, 234, 216, 0.34)", "35s", "-26s", "-42px", "-34px", 0.33],
+  ["90%", "5%", 1.5, "rgba(226, 149, 75, 0.35)", "44s", "-36s", "36px", "42px", 0.33],
+  ["16%", "15%", 1.3, "rgba(244, 234, 216, 0.3)", "49s", "-42s", "-20px", "-56px", 0.25],
+  ["23%", "25%", 2.8, "rgba(226, 149, 75, 0.4)", "32s", "-6s", "56px", "18px", 0.43],
+  ["34%", "29%", 1.4, "rgba(244, 234, 216, 0.32)", "46s", "-37s", "-56px", "20px", 0.27],
+  ["43%", "68%", 2.6, "rgba(226, 149, 75, 0.41)", "27s", "-11s", "22px", "-58px", 0.44],
+  ["56%", "72%", 1.5, "rgba(244, 234, 216, 0.34)", "43s", "-34s", "-58px", "24px", 0.3],
+  ["65%", "47%", 3.2, "rgba(200, 116, 52, 0.41)", "31s", "-15s", "54px", "-18px", 0.45],
+  ["74%", "53%", 1.4, "rgba(244, 234, 216, 0.32)", "48s", "-40s", "-22px", "58px", 0.27],
+  ["83%", "37%", 2.9, "rgba(226, 149, 75, 0.39)", "25s", "-19s", "58px", "20px", 0.42],
+  ["92%", "56%", 1.3, "rgba(244, 234, 216, 0.31)", "46s", "-35s", "-52px", "-18px", 0.26],
+  ["3%", "48%", 2.2, "rgba(226, 149, 75, 0.37)", "37s", "-23s", "44px", "34px", 0.38],
+  ["18%", "96%", 1.4, "rgba(244, 234, 216, 0.31)", "50s", "-44s", "-24px", "-52px", 0.26],
+  ["49%", "43%", 2.5, "rgba(244, 234, 216, 0.42)", "29s", "-16s", "40px", "-34px", 0.41],
+  ["51%", "37%", 1.8, "rgba(226, 149, 75, 0.48)", "24s", "-3s", "-34px", "38px", 0.5],
+  ["53%", "52%", 3.7, "rgba(200, 116, 52, 0.44)", "26s", "-12s", "30px", "44px", 0.5],
+  ["47%", "54%", 1.6, "rgba(244, 234, 216, 0.43)", "35s", "-29s", "-44px", "-30px", 0.39],
+  ["58%", "48%", 2.1, "rgba(226, 149, 75, 0.46)", "30s", "-25s", "52px", "12px", 0.48],
+  ["42%", "48%", 1.4, "rgba(244, 234, 216, 0.38)", "41s", "-32s", "-18px", "-54px", 0.34],
+] as const;
+
+const effectConnections = [
+  ["17%", "71%", "18deg", "13%", "15.5s", "-3s"],
+  ["42%", "31%", "-24deg", "10%", "18s", "-10s"],
+  ["73%", "18%", "31deg", "12%", "21s", "-15s"],
+] as const;
+
+const effectStreaks = [
+  ["far", "small", "left-right", "8%", "18%", "108px", "7.8s", "-0.5s", "1px", "0.1px", 0.18, 0.39, 0.66, 0.98, 0.76],
+  ["near", "standard", "diagonal-down", "76%", "16%", "188px", "6.2s", "-1.5s", "1.85px", "0.48px", 0.34, 0.68, 0.74, 1.24, 0.9],
+  ["near", "large", "steep-up", "84%", "72%", "280px", "6.4s", "-3s", "3px", "0.9px", 0.42, 0.8, 0.82, 1.42, 1.02],
+  ["far", "small", "right-left", "24%", "4%", "98px", "8.2s", "-4.2s", "0.95px", "0.08px", 0.16, 0.36, 0.62, 0.92, 0.72],
+  ["mid", "bright", "shallow-up", "12%", "82%", "220px", "6.4s", "-5s", "1.9px", "0.42px", 0.38, 0.74, 0.76, 1.3, 0.96],
+  ["far", "small", "bottom-top", "68%", "92%", "118px", "8.6s", "-6.1s", "1px", "0.12px", 0.17, 0.38, 0.64, 0.96, 0.74],
+  ["near", "standard", "shallow-down", "18%", "44%", "170px", "6.8s", "-2.4s", "1.8px", "0.46px", 0.32, 0.64, 0.72, 1.2, 0.9],
+  ["near", "standard", "diagonal-up", "62%", "28%", "235px", "6.6s", "-7.1s", "2.25px", "0.66px", 0.36, 0.72, 0.78, 1.28, 0.96],
+  ["far", "small", "top-bottom", "92%", "36%", "104px", "7.9s", "-3.7s", "0.95px", "0.09px", 0.16, 0.36, 0.62, 0.94, 0.72],
+  ["mid", "small", "steep-down", "44%", "88%", "148px", "7.8s", "-6.8s", "1.2px", "0.18px", 0.23, 0.48, 0.68, 1.06, 0.82],
+] as const;
 
 function PointerResponseCard() {
   const [localPointer, setLocalPointer] = useState({
@@ -190,10 +283,169 @@ function ClickAndMoveCard({
   );
 }
 
+function EffectsShowcase() {
+  return (
+    <div className="effects-scene relative flex min-h-[320px] w-full items-center justify-center overflow-hidden p-3 sm:p-4">
+      <div className="effects-scene-field relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-sm">
+        <div className="effects-scene-atmosphere pointer-events-none absolute inset-0 transition duration-700" />
+        <div className="effects-scene-haze pointer-events-none absolute left-1/2 top-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full sm:size-[28rem]" />
+
+        {effectParticles.map((particle, index) => {
+          const [left, top, size, color, duration, delay, driftX, driftY, opacity] =
+            particle;
+          const particleCategory =
+            size >= 3.4 ? "accent" : size >= 2.2 ? "medium" : "dust";
+          const particleLayer =
+            particleCategory === "accent"
+              ? "foreground"
+              : particleCategory === "medium" || index % 5 === 0
+                ? "mid"
+                : "background";
+          const particleDirection =
+            index % 3 === 0
+              ? "vertical"
+              : index % 3 === 1
+                ? "diagonal"
+                : "horizontal";
+          const particleSize =
+            particleCategory === "accent"
+              ? size * 3.35
+              : particleCategory === "medium"
+                ? size * 2.35
+                : size * 1.28;
+          const particleDuration =
+            particleCategory === "accent"
+              ? `${12 + (index % 6)}s`
+              : particleCategory === "medium"
+                ? `${7 + (index % 6)}s`
+                : `${10 + (index % 7)}s`;
+          const layerDuration =
+            particleLayer === "background"
+              ? `${Math.round(Number.parseFloat(particleDuration) * 1.75)}s`
+              : particleLayer === "mid"
+                ? `${Math.round(Number.parseFloat(particleDuration) * 1.18)}s`
+                : particleDuration;
+          const layerSize =
+            particleLayer === "background"
+              ? particleSize * 0.72
+              : particleLayer === "mid"
+                ? particleSize
+                : particleSize * 1.08;
+          const layerOpacity =
+            particleLayer === "background"
+              ? opacity * 0.58
+              : particleLayer === "mid"
+                ? opacity * 0.92
+                : Math.min(opacity * 1.08, 0.56);
+
+          return (
+            <span
+              className={`effects-particle effects-particle-${particleCategory} effects-particle-${particleLayer} effects-particle-${particleDirection} absolute rounded-full`}
+              key={`${left}-${top}-${index}`}
+              style={
+                {
+                  left,
+                  top,
+                  width: `${layerSize}px`,
+                  height: `${layerSize}px`,
+                  color,
+                  backgroundColor: color,
+                  animationDuration: layerDuration,
+                  animationDelay: delay,
+                  "--particle-opacity": layerOpacity,
+                  "--particle-x": driftX,
+                  "--particle-y": driftY,
+                } as CSSProperties
+              }
+            />
+          );
+        })}
+
+        {effectConnections.map(([left, top, rotate, width, duration, delay]) => (
+          <span
+            className="effects-connection absolute"
+            key={`${left}-${top}-${rotate}`}
+            style={
+              {
+                left,
+                top,
+                width,
+                animationDuration: duration,
+                animationDelay: delay,
+                "--connection-rotate": rotate,
+              } as CSSProperties
+            }
+          />
+        ))}
+
+        {effectStreaks.map(
+          (
+            [
+              depth,
+              profile,
+              path,
+              left,
+              top,
+              width,
+              duration,
+              delay,
+              height,
+              blur,
+              riseOpacity,
+              peakOpacity,
+              startScale,
+              peakScale,
+              endScale,
+            ],
+            index,
+          ) => (
+            <span
+              className={`effects-streak effects-streak-${depth} effects-streak-${profile} effects-streak-${path} absolute`}
+              key={`${path}-${left}-${top}-${index}`}
+              style={
+                {
+                  left,
+                  top,
+                  width,
+                  animationDuration: duration,
+                  animationDelay: delay,
+                  "--streak-height": height,
+                  "--streak-blur": blur,
+                  "--streak-rise-opacity": riseOpacity,
+                  "--streak-peak-opacity": peakOpacity,
+                  "--streak-start-scale": startScale,
+                  "--streak-peak-scale": peakScale,
+                  "--streak-end-scale": endScale,
+                } as CSSProperties
+              }
+            />
+          ),
+        )}
+
+        <div className="effects-orb-spill pointer-events-none absolute left-1/2 top-1/2 z-20 size-56 -translate-x-1/2 -translate-y-1/2 rounded-full sm:size-72" />
+        <div className="effects-orb-halo pointer-events-none absolute left-1/2 top-1/2 z-20 size-52 -translate-x-1/2 -translate-y-1/2 rounded-full sm:size-64" />
+        <div className="effects-orb pointer-events-none absolute left-1/2 top-1/2 z-40 size-32 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_35%_32%,#f4ead8_0%,#e2954b_20%,#c87434_42%,rgba(200,116,52,0.18)_68%,transparent_72%)] opacity-95 sm:size-40" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 size-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-copper/14 blur-3xl sm:size-52" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 size-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-copper-bright/5 blur-[72px]" />
+
+        <div className="relative z-50 mt-44 text-center sm:mt-56">
+          <p className="text-[0.68rem] font-black uppercase tracking-[0.24em] text-bone">
+            EFFECTS LAB
+          </p>
+          <p className="mt-3 text-[0.68rem] font-semibold tracking-[0.08em] text-bone-muted/80">
+            Glassmorphism <span aria-hidden="true">&bull;</span> Lighting{" "}
+            <span aria-hidden="true">&bull;</span> Atmosphere
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Hero() {
   const magneticButtonRef = useRef<HTMLButtonElement>(null);
   const scrollCarouselRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState<HeroTab>("Motion");
+  const [activeTab, setActiveTab] = useState<HeroTab>("Effects");
   const [panelVisible, setPanelVisible] = useState(true);
   const [motionPhase, setMotionPhase] = useState<
     "float" | "merge" | "bang" | "app" | "dissolve"
@@ -823,9 +1075,9 @@ export function Hero() {
                   </div>
                 )}
 
-                {(activeTab === "Effects" ||
-                  activeTab === "SVG" ||
-                  activeTab === "Physics") && (
+                {activeTab === "Effects" && <EffectsShowcase />}
+
+                {(activeTab === "SVG" || activeTab === "Physics") && (
                   <div className="flex w-full flex-col justify-center rounded-sm border border-bone/10 bg-charcoal/65 p-6 text-center shadow-inset">
                     <p className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
                       {activeTab}
