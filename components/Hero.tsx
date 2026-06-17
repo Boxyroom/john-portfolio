@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 const motionCards = [
   {
     label: "React",
@@ -27,10 +33,10 @@ const motionCards = [
 const tabs = [
   "Effects",
   "Motion",
-  "Interaction",
-  "Scroll",
-  "SVG",
   "Physics",
+  "Interaction",
+  "SVG",
+  "Scroll",
 ] as const;
 type HeroTab = (typeof tabs)[number];
 
@@ -150,6 +156,95 @@ const effectStreaks = [
   ["far", "small", "top-bottom", "92%", "36%", "104px", "7.9s", "-3.7s", "0.95px", "0.09px", 0.16, 0.36, 0.62, 0.94, 0.72],
   ["mid", "small", "steep-down", "44%", "88%", "148px", "7.8s", "-6.8s", "1.2px", "0.18px", 0.23, 0.48, 0.68, 1.06, 0.82],
 ] as const;
+
+type PhysicsNode = {
+  id: number;
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  ox: number;
+  oy: number;
+  pinned?: boolean;
+};
+
+type PhysicsLink = {
+  a: number;
+  b: number;
+  rest: number;
+  stiffness: number;
+};
+
+const physicsInitialNodes = [
+  { id: 0, x: 150, y: 74, pinned: true },
+  { id: 1, x: 300, y: 64, pinned: true },
+  { id: 2, x: 460, y: 74, pinned: true },
+  { id: 3, x: 610, y: 64, pinned: true },
+  { id: 4, x: 190, y: 150 },
+  { id: 5, x: 340, y: 150 },
+  { id: 6, x: 500, y: 150 },
+  { id: 7, x: 570, y: 218 },
+  { id: 8, x: 420, y: 244 },
+  { id: 9, x: 265, y: 232 },
+  { id: 10, x: 350, y: 296 },
+  { id: 11, x: 500, y: 300 },
+] as const;
+
+const physicsRawLinks = [
+  [0, 1, 0.5],
+  [1, 2, 0.5],
+  [2, 3, 0.5],
+  [0, 4, 0.62],
+  [1, 4, 0.54],
+  [1, 5, 0.62],
+  [2, 5, 0.54],
+  [2, 6, 0.62],
+  [3, 6, 0.54],
+  [4, 5, 0.44],
+  [5, 6, 0.44],
+  [6, 7, 0.46],
+  [7, 8, 0.42],
+  [8, 9, 0.42],
+  [9, 4, 0.46],
+  [5, 8, 0.48],
+  [9, 10, 0.38],
+  [8, 10, 0.36],
+  [8, 11, 0.36],
+  [7, 11, 0.38],
+  [10, 11, 0.34],
+  [4, 8, 0.24],
+  [5, 9, 0.24],
+  [6, 8, 0.24],
+] as const;
+
+function createPhysicsNodes() {
+  return physicsInitialNodes.map((node) => ({
+    id: node.id,
+    x: node.x,
+    y: node.y,
+    vx: "pinned" in node && node.pinned ? 0 : (node.id % 2 === 0 ? 18 : -18),
+    vy: "pinned" in node && node.pinned ? 0 : node.id % 3 === 0 ? 10 : -6,
+    ox: node.x,
+    oy: node.y,
+    pinned: "pinned" in node ? node.pinned : false,
+  }));
+}
+
+function createPhysicsLinks(): PhysicsLink[] {
+  return physicsRawLinks.map(([a, b, stiffness]) => {
+    const nodeA = physicsInitialNodes[a];
+    const nodeB = physicsInitialNodes[b];
+    const dx = nodeB.x - nodeA.x;
+    const dy = nodeB.y - nodeA.y;
+
+    return {
+      a,
+      b,
+      stiffness,
+      rest: Math.sqrt(dx * dx + dy * dy),
+    };
+  });
+}
 
 function PointerResponseCard() {
   const [localPointer, setLocalPointer] = useState({
@@ -525,6 +620,299 @@ function SvgBlueprintShowcase() {
           <path d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214" />
           <path d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230" />
           <path className="svg-blueprint-signature-line" d="M236 288 H532" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function PhysicsSpringShowcase() {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const nodesRef = useRef<PhysicsNode[]>(createPhysicsNodes());
+  const linksRef = useRef<PhysicsLink[]>(createPhysicsLinks());
+  const draggedNodeRef = useRef<number | null>(null);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const pointerVelocityRef = useRef({ x: 0, y: 0 });
+  const lastPointerRef = useRef({ x: 0, y: 0, time: 0 });
+  const [nodes, setNodes] = useState<PhysicsNode[]>(() => createPhysicsNodes());
+
+  function getSvgPoint(event: { clientX: number; clientY: number }) {
+    const svg = svgRef.current;
+
+    if (!svg) {
+      return { x: 0, y: 0 };
+    }
+
+    const matrix = svg.getScreenCTM();
+
+    if (!matrix) {
+      return { x: 0, y: 0 };
+    }
+
+    const point = svg.createSVGPoint();
+    point.x = event.clientX;
+    point.y = event.clientY;
+
+    const transformed = point.matrixTransform(matrix.inverse());
+
+    return {
+      x: transformed.x,
+      y: transformed.y,
+    };
+  }
+
+  function beginDrag(event: ReactPointerEvent<SVGCircleElement>, id: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    svgRef.current?.setPointerCapture(event.pointerId);
+    draggedNodeRef.current = id;
+    const point = getSvgPoint(event);
+    pointerRef.current = point;
+    pointerVelocityRef.current = { x: 0, y: 0 };
+    lastPointerRef.current = {
+      x: point.x,
+      y: point.y,
+      time: performance.now(),
+    };
+
+    const node = nodesRef.current[id];
+    node.x = point.x;
+    node.y = point.y;
+    node.vx = 0;
+    node.vy = 0;
+  }
+
+  function moveDrag(event: ReactPointerEvent<SVGSVGElement>) {
+    if (draggedNodeRef.current === null) {
+      return;
+    }
+
+    const point = getSvgPoint(event);
+    const now = performance.now();
+    const elapsed = Math.max((now - lastPointerRef.current.time) / 1000, 0.016);
+
+    pointerVelocityRef.current = {
+      x: (point.x - lastPointerRef.current.x) / elapsed,
+      y: (point.y - lastPointerRef.current.y) / elapsed,
+    };
+    lastPointerRef.current = {
+      x: point.x,
+      y: point.y,
+      time: now,
+    };
+    pointerRef.current = point;
+  }
+
+  function endDrag(event: ReactPointerEvent<SVGSVGElement>) {
+    if (draggedNodeRef.current === null) {
+      return;
+    }
+
+    const releasedNode = nodesRef.current[draggedNodeRef.current];
+    releasedNode.vx = pointerVelocityRef.current.x * 0.55;
+    releasedNode.vy = pointerVelocityRef.current.y * 0.55;
+
+    if (svgRef.current?.hasPointerCapture(event.pointerId)) {
+      svgRef.current.releasePointerCapture(event.pointerId);
+    }
+    draggedNodeRef.current = null;
+  }
+
+  useEffect(() => {
+    let frame = 0;
+    let lastTime = performance.now();
+
+    function solve(now: number) {
+      const nodes = nodesRef.current;
+      const links = linksRef.current;
+      const elapsed = now / 1000;
+      const delta = Math.min((now - lastTime) / 1000, 0.032);
+      lastTime = now;
+
+      for (let substep = 0; substep < 3; substep += 1) {
+        const dt = delta / 3;
+        const draggedNode = draggedNodeRef.current;
+
+        nodes.forEach((node) => {
+          if (draggedNode === node.id) {
+            node.x = pointerRef.current.x;
+            node.y = pointerRef.current.y;
+            node.vx = 0;
+            node.vy = 0;
+
+            return;
+          }
+
+          if (node.pinned) {
+            node.x = node.ox + Math.sin(elapsed * 0.9 + node.id) * 2.8;
+            node.y = node.oy + Math.cos(elapsed * 0.7 + node.id) * 1.3;
+            node.vx = 0;
+            node.vy = 0;
+
+            return;
+          }
+
+          node.vy += 225 * dt;
+          node.vx += Math.sin(elapsed * 1.25 + node.id * 0.7) * 7 * dt;
+
+          if (node.id >= 10) {
+            node.vy += 46 * dt;
+          }
+        });
+
+        links.forEach((link) => {
+          const a = nodes[link.a];
+          const b = nodes[link.b];
+          const dx = b.x - a.x;
+          const dy = b.y - a.y;
+          const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+          const normalX = dx / distance;
+          const normalY = dy / distance;
+          const relativeVelocity =
+            (b.vx - a.vx) * normalX + (b.vy - a.vy) * normalY;
+          const force =
+            (distance - link.rest) * link.stiffness * 14 +
+            relativeVelocity * link.stiffness * 0.72;
+          const fx = normalX * force;
+          const fy = normalY * force;
+          const aFree = !a.pinned && draggedNodeRef.current !== a.id;
+          const bFree = !b.pinned && draggedNodeRef.current !== b.id;
+
+          if (aFree) {
+            a.vx += fx * dt;
+            a.vy += fy * dt;
+          }
+
+          if (bFree) {
+            b.vx -= fx * dt;
+            b.vy -= fy * dt;
+          }
+        });
+
+        nodes.forEach((node) => {
+          if (node.pinned || draggedNodeRef.current === node.id) {
+            return;
+          }
+
+          node.vx *= 0.986;
+          node.vy *= 0.986;
+          node.x += node.vx * dt;
+          node.y += node.vy * dt;
+
+          if (node.x < 48 || node.x > 712) {
+            node.x = Math.max(48, Math.min(712, node.x));
+            node.vx *= -0.38;
+          }
+
+          if (node.y < 48 || node.y > 322) {
+            node.y = Math.max(48, Math.min(322, node.y));
+            node.vy *= -0.38;
+          }
+        });
+
+        for (let pass = 0; pass < 3; pass += 1) {
+          links.forEach((link) => {
+            const a = nodes[link.a];
+            const b = nodes[link.b];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const correction = (distance - link.rest) * 0.16;
+            const cx = (dx / distance) * correction;
+            const cy = (dy / distance) * correction;
+            const aFree = !a.pinned && draggedNodeRef.current !== a.id;
+            const bFree = !b.pinned && draggedNodeRef.current !== b.id;
+
+            if (aFree && bFree) {
+              a.x += cx * 0.5;
+              a.y += cy * 0.5;
+              b.x -= cx * 0.5;
+              b.y -= cy * 0.5;
+            } else if (aFree) {
+              a.x += cx;
+              a.y += cy;
+            } else if (bFree) {
+              b.x -= cx;
+              b.y -= cy;
+            }
+          });
+        }
+      }
+
+      setNodes(nodes.map((node) => ({ ...node })));
+      frame = requestAnimationFrame(solve);
+    }
+
+    frame = requestAnimationFrame(solve);
+
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  return (
+    <div className="physics-lab relative flex min-h-[320px] w-full items-center justify-center overflow-hidden rounded-sm border border-bone/10 bg-charcoal/70 p-4 shadow-inset">
+      <svg
+        aria-label="Interactive spring physics simulation"
+        className="relative z-10 h-[300px] w-full max-w-[760px] touch-none"
+        onPointerCancel={endDrag}
+        onPointerMove={moveDrag}
+        onPointerUp={endDrag}
+        ref={svgRef}
+        role="img"
+        viewBox="0 0 760 360"
+      >
+        <defs>
+          <filter id="physicsNodeGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <g className="physics-links">
+          {linksRef.current.map((link) => {
+            const a = nodes[link.a];
+            const b = nodes[link.b];
+            const dx = b.x - a.x;
+            const dy = b.y - a.y;
+            const distance = Math.sqrt(dx * dx + dy * dy) || 1;
+            const strain = Math.max(
+              -0.25,
+              Math.min(0.35, (distance - link.rest) / link.rest),
+            );
+            const tension = Math.max(0, strain);
+            const compression = Math.max(0, -strain);
+
+            return (
+              <line
+                key={`${link.a}-${link.b}`}
+                style={
+                  {
+                    "--link-compression": compression,
+                    "--link-tension": tension,
+                  } as CSSProperties
+                }
+                x1={a.x}
+                x2={b.x}
+                y1={a.y}
+                y2={b.y}
+              />
+            );
+          })}
+        </g>
+
+        <g className="physics-nodes">
+          {nodes.map((node) => (
+            <circle
+              className={node.pinned ? "physics-node-pinned" : ""}
+              cx={node.x}
+              cy={node.y}
+              key={node.id}
+              onPointerDown={(event) => beginDrag(event, node.id)}
+              r={node.pinned ? 6 : node.id >= 10 ? 7 : 5}
+            />
+          ))}
         </g>
       </svg>
     </div>
@@ -1168,19 +1556,7 @@ export function Hero() {
 
                 {activeTab === "SVG" && <SvgBlueprintShowcase />}
 
-                {activeTab === "Physics" && (
-                  <div className="flex w-full flex-col justify-center rounded-sm border border-bone/10 bg-charcoal/65 p-6 text-center shadow-inset">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
-                      {activeTab}
-                    </p>
-                    <p className="mt-6 text-4xl font-black text-bone">
-                      Coming Soon
-                    </p>
-                    <p className="mt-4 text-sm font-semibold leading-6 text-bone-muted">
-                      {comingSoon[activeTab]}
-                    </p>
-                  </div>
-                )}
+                {activeTab === "Physics" && <PhysicsSpringShowcase />}
               </div>
             </div>
           </div>

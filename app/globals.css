@@ -507,6 +507,78 @@ body {
   opacity: 0;
 }
 
+.physics-lab {
+  background:
+    linear-gradient(rgba(244, 234, 216, 0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 234, 216, 0.028) 1px, transparent 1px),
+    radial-gradient(
+      circle at 50% 34%,
+      rgba(200, 116, 52, 0.09),
+      transparent 36%
+    ),
+    linear-gradient(180deg, rgba(18, 16, 14, 0.94), rgba(5, 4, 4, 0.96));
+  background-size:
+    28px 28px,
+    28px 28px,
+    auto,
+    auto;
+}
+
+.physics-lab::after {
+  background:
+    radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.48)),
+    linear-gradient(180deg, rgba(244, 234, 216, 0.03), transparent 28%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.physics-links line {
+  stroke: color-mix(
+    in srgb,
+    rgba(244, 234, 216, 0.38),
+    #e2954b calc(var(--link-tension, 0) * 180%)
+  );
+  stroke-linecap: round;
+  stroke-opacity: calc(
+    0.26 + var(--link-tension, 0) * 1.35 + var(--link-compression, 0) * 0.85
+  );
+  stroke-width: calc(
+    1.05px + var(--link-tension, 0) * 4px + var(--link-compression, 0) * 2px
+  );
+}
+
+.physics-links line:nth-child(3n) {
+  stroke: color-mix(
+    in srgb,
+    rgba(226, 149, 75, 0.42),
+    #f4ead8 calc(var(--link-compression, 0) * 160%)
+  );
+}
+
+.physics-nodes circle {
+  cursor: grab;
+  fill: #f4ead8;
+  filter: url("#physicsNodeGlow");
+  stroke: rgba(18, 16, 14, 0.78);
+  stroke-width: 1.5;
+}
+
+.physics-nodes circle:active {
+  cursor: grabbing;
+}
+
+.physics-nodes circle:nth-child(2n) {
+  fill: #e2954b;
+}
+
+.physics-nodes .physics-node-pinned {
+  fill: #c87434;
+  stroke: rgba(244, 234, 216, 0.55);
+  stroke-width: 2;
+}
+
 @keyframes svg-blueprint-guides {
   0%,
   100% {
