@@ -413,6 +413,238 @@ body {
   animation-name: effects-streak-steep-down;
 }
 
+.svg-blueprint {
+  background:
+    linear-gradient(rgba(244, 234, 216, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 234, 216, 0.035) 1px, transparent 1px),
+    linear-gradient(rgba(200, 116, 52, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 116, 52, 0.035) 1px, transparent 1px),
+    radial-gradient(
+      circle at 50% 45%,
+      rgba(200, 116, 52, 0.08),
+      transparent 34%
+    ),
+    linear-gradient(180deg, rgba(18, 16, 14, 0.92), rgba(5, 4, 4, 0.96));
+  background-size:
+    24px 24px,
+    24px 24px,
+    96px 96px,
+    96px 96px,
+    auto,
+    auto;
+}
+
+.svg-blueprint::after {
+  background:
+    radial-gradient(circle at center, transparent 44%, rgba(0, 0, 0, 0.42)),
+    linear-gradient(180deg, rgba(244, 234, 216, 0.035), transparent 24%);
+  content: "";
+  inset: 0;
+  pointer-events: none;
+  position: absolute;
+}
+
+.svg-blueprint-guides path,
+.svg-blueprint-guides circle {
+  animation: svg-blueprint-guides 11s ease-in-out infinite;
+  stroke: rgba(244, 234, 216, 0.34);
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 0.9;
+}
+
+.svg-blueprint-construction path {
+  animation: svg-blueprint-construction 11s ease-in-out infinite;
+  stroke: rgba(226, 149, 75, 0.54);
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.1;
+}
+
+.svg-blueprint-form path {
+  animation: svg-blueprint-form 11s ease-in-out infinite;
+  filter: url("#blueprintGlow");
+  stroke: rgba(244, 234, 216, 0.82);
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.4;
+}
+
+.svg-blueprint-final path {
+  animation: svg-blueprint-final 11s ease-in-out infinite;
+  filter: url("#blueprintGlow");
+  stroke: url("#blueprintCopperLine");
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 5;
+}
+
+.svg-blueprint-final .svg-blueprint-final-shadow {
+  stroke: rgba(244, 234, 216, 0.3);
+  stroke-width: 8;
+}
+
+.svg-blueprint-final .svg-blueprint-signature-line {
+  stroke: rgba(244, 234, 216, 0.34);
+  stroke-width: 1.1;
+}
+
+.svg-blueprint-annotations {
+  animation: svg-blueprint-labels 11s ease-in-out infinite;
+  fill: rgba(244, 234, 216, 0.68);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  opacity: 0;
+}
+
+@keyframes svg-blueprint-guides {
+  0%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 900;
+  }
+
+  4% {
+    opacity: 0.42;
+  }
+
+  18%,
+  45% {
+    opacity: 0.42;
+    stroke-dashoffset: 0;
+  }
+
+  58%,
+  82% {
+    opacity: 0.16;
+    stroke-dashoffset: 0;
+  }
+
+  94% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes svg-blueprint-construction {
+  0%,
+  9% {
+    opacity: 0;
+    stroke-dashoffset: 900;
+  }
+
+  15% {
+    opacity: 0.62;
+  }
+
+  34%,
+  50% {
+    opacity: 0.62;
+    stroke-dashoffset: 0;
+  }
+
+  64%,
+  82% {
+    opacity: 0.18;
+    stroke-dashoffset: 0;
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes svg-blueprint-form {
+  0%,
+  24% {
+    opacity: 0;
+    stroke-dashoffset: 900;
+  }
+
+  30% {
+    opacity: 0.85;
+  }
+
+  48% {
+    opacity: 0.85;
+    stroke-dashoffset: 0;
+  }
+
+  60%,
+  82% {
+    opacity: 0.24;
+    stroke-dashoffset: 0;
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes svg-blueprint-labels {
+  0%,
+  6% {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+
+  12%,
+  40% {
+    opacity: 0.72;
+    transform: translateY(0);
+  }
+
+  58%,
+  82% {
+    opacity: 0.28;
+    transform: translateY(0);
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes svg-blueprint-final {
+  0%,
+  46% {
+    opacity: 0;
+    stroke-dashoffset: 900;
+  }
+
+  54% {
+    opacity: 1;
+  }
+
+  66%,
+  82% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  94%,
+  100% {
+    opacity: 0;
+    stroke-dashoffset: 0;
+  }
+}
+
 @keyframes effects-orb-pulse {
   0%,
   100% {

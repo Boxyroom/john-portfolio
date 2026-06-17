@@ -442,6 +442,95 @@ function EffectsShowcase() {
   );
 }
 
+function SvgBlueprintShowcase() {
+  return (
+    <div className="svg-blueprint relative flex min-h-[320px] w-full items-center justify-center overflow-hidden rounded-sm border border-bone/10 bg-charcoal/70 p-4 shadow-inset">
+      <svg
+        aria-label="Animated blueprint construction of the JC maker mark"
+        className="relative z-10 h-[300px] w-full max-w-[760px]"
+        role="img"
+        viewBox="0 0 760 360"
+      >
+        <defs>
+          <linearGradient id="blueprintCopperLine" x1="0" x2="1" y1="0" y2="1">
+            <stop offset="0%" stopColor="#f4ead8" stopOpacity="0.88" />
+            <stop offset="52%" stopColor="#e2954b" stopOpacity="0.9" />
+            <stop offset="100%" stopColor="#c87434" stopOpacity="0.72" />
+          </linearGradient>
+          <filter id="blueprintGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="1.2" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <g className="svg-blueprint-guides" fill="none">
+          <path d="M184 70 H576" />
+          <path d="M184 180 H576" />
+          <path d="M184 290 H576" />
+          <path d="M256 52 V306" />
+          <path d="M330 52 V306" />
+          <path d="M436 52 V306" />
+          <path d="M512 52 V306" />
+          <circle cx="458" cy="180" r="92" />
+          <circle cx="458" cy="180" r="66" />
+          <circle cx="292" cy="220" r="50" />
+          <path d="M228 92 H356 V268 H228 Z" />
+          <path d="M382 88 H552 V272 H382 Z" />
+          <path d="M214 306 H546" />
+          <path d="M214 298 V314" />
+          <path d="M330 298 V314" />
+          <path d="M458 298 V314" />
+          <path d="M546 298 V314" />
+        </g>
+
+        <g className="svg-blueprint-construction" fill="none">
+          <path d="M330 92 V212 C330 248 304 268 274 258" />
+          <path d="M246 214 C244 238 258 256 282 262" />
+          <path d="M508 118 C474 84 414 92 392 134" />
+          <path d="M392 134 C366 184 386 246 440 260" />
+          <path d="M440 260 C476 268 504 252 520 230" />
+          <path d="M256 92 L330 92" />
+          <path d="M246 214 L330 214" />
+          <path d="M392 134 L508 118" />
+          <path d="M440 260 L520 230" />
+          <path d="M292 220 L458 180" />
+          <path d="M330 92 L520 230" />
+          <path d="M246 214 L508 118" />
+        </g>
+
+        <g className="svg-blueprint-form" fill="none">
+          <path d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214" />
+          <path d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230" />
+        </g>
+
+        <g className="svg-blueprint-annotations">
+          <text x="188" y="48">GUIDES</text>
+          <text x="478" y="84">RADIUS</text>
+          <text x="240" y="332">BASELINE</text>
+          <text x="546" y="198">MARK</text>
+        </g>
+
+        <g className="svg-blueprint-final" fill="none">
+          <path
+            className="svg-blueprint-final-shadow"
+            d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214"
+          />
+          <path
+            className="svg-blueprint-final-shadow"
+            d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230"
+          />
+          <path d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214" />
+          <path d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230" />
+          <path className="svg-blueprint-signature-line" d="M236 288 H532" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 export function Hero() {
   const magneticButtonRef = useRef<HTMLButtonElement>(null);
   const scrollCarouselRef = useRef<HTMLDivElement>(null);
@@ -1077,7 +1166,9 @@ export function Hero() {
 
                 {activeTab === "Effects" && <EffectsShowcase />}
 
-                {(activeTab === "SVG" || activeTab === "Physics") && (
+                {activeTab === "SVG" && <SvgBlueprintShowcase />}
+
+                {activeTab === "Physics" && (
                   <div className="flex w-full flex-col justify-center rounded-sm border border-bone/10 bg-charcoal/65 p-6 text-center shadow-inset">
                     <p className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
                       {activeTab}
