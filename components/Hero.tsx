@@ -40,6 +40,13 @@ const tabs = [
 ] as const;
 type HeroTab = (typeof tabs)[number];
 
+const mobileVisibleTabs = new Set<HeroTab>([
+  "Effects",
+  "Physics",
+  "SVG",
+  "Scroll",
+]);
+
 const labPanels = [
   {
     id: "pointer-response",
@@ -961,6 +968,24 @@ export function Hero() {
   ];
 
   useEffect(() => {
+    const mobileQuery = window.matchMedia("(max-width: 639px)");
+
+    function keepMobileTabCurated() {
+      if (mobileQuery.matches && !mobileVisibleTabs.has(activeTab)) {
+        setActiveTab("Effects");
+        setPanelVisible(true);
+      }
+    }
+
+    keepMobileTabCurated();
+    mobileQuery.addEventListener("change", keepMobileTabCurated);
+
+    return () => {
+      mobileQuery.removeEventListener("change", keepMobileTabCurated);
+    };
+  }, [activeTab]);
+
+  useEffect(() => {
     if (activeTab !== "Motion") {
       return;
     }
@@ -1099,10 +1124,12 @@ export function Hero() {
               <span>2026</span>
             </div>
 
-            <div className="mt-6 grid grid-cols-3 border-b border-bone/15 text-[0.58rem] font-black uppercase tracking-[0.08em] text-bone-muted sm:grid-cols-6 sm:text-[0.64rem] lg:text-[0.68rem]">
+            <div className="mt-6 grid grid-cols-4 border-b border-bone/15 text-[0.58rem] font-black uppercase tracking-[0.08em] text-bone-muted sm:grid-cols-6 sm:text-[0.64rem] lg:text-[0.68rem]">
               {tabs.map((tab) => (
                 <button
-                  className="relative px-1 pb-3 text-center transition duration-300 hover:text-bone focus:outline-none focus-visible:text-bone"
+                  className={`relative px-1 pb-3 text-center transition duration-300 hover:text-bone focus:outline-none focus-visible:text-bone ${
+                    mobileVisibleTabs.has(tab) ? "" : "hidden sm:block"
+                  }`}
                   key={tab}
                   onClick={() => selectTab(tab)}
                   type="button"
