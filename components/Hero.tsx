@@ -380,8 +380,8 @@ function ClickAndMoveCard({
 
 function EffectsShowcase() {
   return (
-    <div className="effects-scene relative flex min-h-[320px] w-full items-center justify-center overflow-hidden p-3 sm:p-4">
-      <div className="effects-scene-field relative flex min-h-[300px] w-full items-center justify-center overflow-hidden rounded-sm">
+    <div className="effects-scene relative flex h-full min-h-0 w-full items-center justify-center overflow-hidden p-3 sm:min-h-[320px] sm:p-4">
+      <div className="effects-scene-field relative flex h-full min-h-0 w-full items-center justify-center overflow-hidden rounded-sm sm:min-h-[300px]">
         <div className="effects-scene-atmosphere pointer-events-none absolute inset-0 transition duration-700" />
         <div className="effects-scene-haze pointer-events-none absolute left-1/2 top-1/2 size-80 -translate-x-1/2 -translate-y-1/2 rounded-full sm:size-[28rem]" />
 
