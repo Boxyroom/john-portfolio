@@ -10,11 +10,11 @@ export function Contact() {
             </h2>
           </div>
           <div className="flex flex-col gap-4 sm:flex-row lg:justify-end">
-            <a className="btn-primary" href="mailto:hello@example.com">
-              hello@example.com
+            <a className="btn-primary" href="mailto:clavette.john@gmail.com">
+              clavette.john@gmail.com
             </a>
-            <a className="btn-secondary" href="https://www.linkedin.com">
-              LinkedIn
+            <a className="btn-secondary" href="mailto:clavette.john@gmail.com">
+              Contact John
             </a>
           </div>
         </div>

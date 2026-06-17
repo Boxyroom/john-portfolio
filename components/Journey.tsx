@@ -7,12 +7,12 @@ const milestones = [
   {
     year: "Foundation",
     title: "Computer Engineering Studies",
-    description: "Pursued technology studies and developed a deeper understanding of software, systems, and how computers work behind the scenes.",
+    description: "Completed two years of Computer Engineering studies at the University of Maine in Orono from 1995 to 1997, building a foundation in software development, mathematics, systems thinking, and technical problem solving.",
   },
   {
     year: "Career craft",
     title: "28 Years in Construction",
-    description: "Built homes, solved problems in the field, managed projects, and developed a mindset centered on craftsmanship, accountability, and delivering quality work.",
+    description: "Built a 28-year career through strong work ethic, craftsmanship, leadership, and problem solving. Managed complex projects, coordinated teams, and delivered quality results under real-world deadlines and constraints.",
   },
   {
     year: "Now",
@@ -28,7 +28,7 @@ export function Journey() {
       <div className="max-w-2xl">
         <p className="section-kicker">Journey</p>
         <h2 className="section-heading">
-          From job-site judgment to software craftsmanship.
+          From job-site problem solving to software craftsmanship.
         </h2>
       </div>
       <div className="mt-12 grid gap-6 lg:grid-cols-3">

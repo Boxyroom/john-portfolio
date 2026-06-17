@@ -6,7 +6,9 @@ const projects = [
     technologies: ["React", "TMDB API", "JavaScript", "CSS"],
     githubUrl: "https://github.com/Boxyroom/MovieLand",
     liveUrl: "https://movie-land-sable-xi.vercel.app",
-    previewAlt: "Placeholder preview for the MovieLand movie discovery application",
+    previewAlt: "Screenshot preview of the MovieLand movie discovery application",
+    previewImage: "/project-previews/movieland.png",
+    previewPosition: "48% 50%",
     previewLabel: "MovieLand",
     previewDetail: "Movie search interface",
   },
@@ -17,7 +19,9 @@ const projects = [
     technologies: ["React", "React Router", "Axios", "Firebase"],
     githubUrl: "https://github.com/Boxyroom/john-internship",
     liveUrl: "https://john-internship-ybmv.vercel.app/",
-    previewAlt: "Placeholder preview for the NFT Marketplace internship project",
+    previewAlt: "Screenshot preview of the NFT Marketplace internship project",
+    previewImage: "/project-previews/nft-marketplace.png",
+    previewPosition: "43% 50%",
     previewLabel: "NFT Marketplace",
     previewDetail: "Marketplace product grid",
   },
@@ -28,7 +32,9 @@ const projects = [
     technologies: ["Next.js", "TypeScript", "Stripe", "Firebase"],
     githubUrl: "https://github.com/Boxyroom/john-advanced-internship",
     liveUrl: "https://john-advanced-internship.vercel.app/",
-    previewAlt: "Placeholder preview for the Summarist premium reading platform",
+    previewAlt: "Screenshot preview of the Summarist premium reading platform",
+    previewImage: "/project-previews/summarist.png",
+    previewPosition: "43% 50%",
     previewLabel: "SUMMARIST",
     previewDetail: "Premium reading platform",
   },
@@ -37,10 +43,14 @@ const projects = [
 function ProjectPreview({
   alt,
   detail,
+  imagePosition,
+  imageSrc,
   label,
 }: {
   alt: string;
   detail: string;
+  imagePosition: string;
+  imageSrc: string;
   label: string;
 }) {
   return (
@@ -55,13 +65,16 @@ function ProjectPreview({
           <span className="size-2 rounded-full bg-bone-muted/50" />
           <span className="size-2 rounded-full bg-steel/60" />
         </div>
-        <div>
-          <p className="text-sm font-black uppercase tracking-[0.16em] text-copper-bright">
-            {label}
-          </p>
-          <p className="mt-2 text-lg font-black leading-tight text-bone">
-            {detail}
-          </p>
+        <div className="mt-3 min-h-0 flex-1 overflow-hidden rounded-sm border border-bone/10 bg-charcoal">
+          <img
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.035]"
+            src={imageSrc}
+            style={{ objectPosition: imagePosition }}
+          />
+          <span className="sr-only">
+            {label}: {detail}
+          </span>
         </div>
       </div>
     </div>
@@ -92,6 +105,8 @@ export function Projects() {
             <ProjectPreview
               alt={project.previewAlt}
               detail={project.previewDetail}
+              imagePosition={project.previewPosition}
+              imageSrc={project.previewImage}
               label={project.previewLabel}
             />
             <p className="text-sm font-black uppercase tracking-[0.16em] text-steel">
