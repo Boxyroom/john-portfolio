@@ -6,6 +6,7 @@ import {
   useState,
   type CSSProperties,
   type PointerEvent as ReactPointerEvent,
+  type TouchEvent as ReactTouchEvent,
 } from "react";
 const motionCards = [
   {
@@ -668,12 +669,20 @@ function PhysicsSpringShowcase() {
     };
   }
 
-  function beginDrag(event: ReactPointerEvent<SVGCircleElement>, id: number) {
-    event.preventDefault();
-    event.stopPropagation();
-    svgRef.current?.setPointerCapture(event.pointerId);
+  function getTouchPoint(
+    event: ReactTouchEvent<SVGCircleElement | SVGSVGElement>,
+  ) {
+    const touch = event.touches[0] ?? event.changedTouches[0];
+
+    if (!touch) {
+      return null;
+    }
+
+    return getSvgPoint(touch);
+  }
+
+  function startDragAtPoint(point: { x: number; y: number }, id: number) {
     draggedNodeRef.current = id;
-    const point = getSvgPoint(event);
     pointerRef.current = point;
     pointerVelocityRef.current = { x: 0, y: 0 };
     lastPointerRef.current = {
@@ -689,12 +698,11 @@ function PhysicsSpringShowcase() {
     node.vy = 0;
   }
 
-  function moveDrag(event: ReactPointerEvent<SVGSVGElement>) {
+  function updateDragPoint(point: { x: number; y: number }) {
     if (draggedNodeRef.current === null) {
       return;
     }
 
-    const point = getSvgPoint(event);
     const now = performance.now();
     const elapsed = Math.max((now - lastPointerRef.current.time) / 1000, 0.016);
 
@@ -710,7 +718,7 @@ function PhysicsSpringShowcase() {
     pointerRef.current = point;
   }
 
-  function endDrag(event: ReactPointerEvent<SVGSVGElement>) {
+  function releaseDraggedNode() {
     if (draggedNodeRef.current === null) {
       return;
     }
@@ -718,11 +726,87 @@ function PhysicsSpringShowcase() {
     const releasedNode = nodesRef.current[draggedNodeRef.current];
     releasedNode.vx = pointerVelocityRef.current.x * 0.55;
     releasedNode.vy = pointerVelocityRef.current.y * 0.55;
-
-    if (svgRef.current?.hasPointerCapture(event.pointerId)) {
-      svgRef.current.releasePointerCapture(event.pointerId);
-    }
     draggedNodeRef.current = null;
+  }
+
+  function beginPointerDrag(event: ReactPointerEvent<SVGCircleElement>, id: number) {
+    if (event.pointerType === "touch") {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+      svgRef.current?.setPointerCapture(event.pointerId);
+    } catch {
+      // Some SVG implementations do not support capture on the parent SVG.
+    }
+
+    startDragAtPoint(getSvgPoint(event), id);
+  }
+
+  function movePointerDrag(event: ReactPointerEvent<SVGSVGElement>) {
+    if (event.pointerType === "touch" || draggedNodeRef.current === null) {
+      return;
+    }
+
+    event.preventDefault();
+    updateDragPoint(getSvgPoint(event));
+  }
+
+  function endPointerDrag(event: ReactPointerEvent<SVGSVGElement>) {
+    if (event.pointerType === "touch" || draggedNodeRef.current === null) {
+      return;
+    }
+
+    releaseDraggedNode();
+
+    try {
+      if (svgRef.current?.hasPointerCapture(event.pointerId)) {
+        svgRef.current.releasePointerCapture(event.pointerId);
+      }
+    } catch {
+      // Ignore capture release failures from SVG edge cases.
+    }
+  }
+
+  function beginTouchDrag(event: ReactTouchEvent<SVGCircleElement>, id: number) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const point = getTouchPoint(event);
+
+    if (!point) {
+      return;
+    }
+
+    startDragAtPoint(point, id);
+  }
+
+  function moveTouchDrag(event: ReactTouchEvent<SVGSVGElement>) {
+    if (draggedNodeRef.current === null) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const point = getTouchPoint(event);
+
+    if (!point) {
+      return;
+    }
+
+    updateDragPoint(point);
+  }
+
+  function endTouchDrag(event: ReactTouchEvent<SVGSVGElement>) {
+    if (draggedNodeRef.current === null) {
+      return;
+    }
+
+    event.preventDefault();
+    releaseDraggedNode();
   }
 
   useEffect(() => {
@@ -860,9 +944,12 @@ function PhysicsSpringShowcase() {
       <svg
         aria-label="Interactive spring physics simulation"
         className="relative z-10 h-[300px] w-full max-w-[760px] touch-none"
-        onPointerCancel={endDrag}
-        onPointerMove={moveDrag}
-        onPointerUp={endDrag}
+        onPointerCancel={endPointerDrag}
+        onPointerMove={movePointerDrag}
+        onPointerUp={endPointerDrag}
+        onTouchCancel={endTouchDrag}
+        onTouchEnd={endTouchDrag}
+        onTouchMove={moveTouchDrag}
         ref={svgRef}
         role="img"
         viewBox="0 0 760 360"
@@ -916,8 +1003,21 @@ function PhysicsSpringShowcase() {
               cx={node.x}
               cy={node.y}
               key={node.id}
-              onPointerDown={(event) => beginDrag(event, node.id)}
               r={node.pinned ? 6 : node.id >= 10 ? 7 : 5}
+            />
+          ))}
+        </g>
+        <g className="physics-hit-targets">
+          {nodes.map((node) => (
+            <circle
+              cx={node.x}
+              cy={node.y}
+              fill="transparent"
+              key={`hit-${node.id}`}
+              onPointerDown={(event) => beginPointerDrag(event, node.id)}
+              onTouchStart={(event) => beginTouchDrag(event, node.id)}
+              pointerEvents="all"
+              r={node.pinned ? 20 : 24}
             />
           ))}
         </g>
