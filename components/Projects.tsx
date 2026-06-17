@@ -1,3 +1,5 @@
+import { SectionLink } from "@/components/SectionLink";
+
 const projects = [
   {
     name: "MovieLand",
@@ -92,9 +94,9 @@ export function Projects() {
             Selected work shaped for clarity, utility, and trust.
           </h2>
         </div>
-        <a className="text-sm font-black uppercase tracking-[0.12em] text-copper-bright underline-offset-4 hover:text-bone hover:underline" href="#contact">
+        <SectionLink className="text-sm font-black uppercase tracking-[0.12em] text-copper-bright underline-offset-4 hover:text-bone hover:underline" href="#contact">
           Discuss a build
-        </a>
+        </SectionLink>
       </div>
       <div className="mt-12 grid gap-6 lg:grid-cols-3">
         {projects.map((project) => (

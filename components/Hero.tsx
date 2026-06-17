@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type TouchEvent as ReactTouchEvent,
 } from "react";
+import { SectionLink } from "@/components/SectionLink";
 const motionCards = [
   {
     label: "React",
@@ -1207,12 +1208,12 @@ export function Hero() {
           is clear, durable, and ready for real users.
         </p>
         <div className="mt-6 flex flex-col gap-4 sm:flex-row">
-          <a className="btn-primary" href="#projects">
+          <SectionLink className="btn-primary" href="#projects">
             View projects
-          </a>
-          <a className="btn-secondary" href="#contact">
+          </SectionLink>
+          <SectionLink className="btn-secondary" href="#contact">
             Start a conversation
-          </a>
+          </SectionLink>
         </div>
       </div>
 
