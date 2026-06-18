@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const milestones = [
   {
     year: "Early spark",
@@ -28,9 +30,9 @@ const profileLinks = [
     ariaLabel: "Visit John Clavette's GitHub profile",
   },
   {
-    label: "LinkedIn (Coming Soon)",
-    href: "",
-    ariaLabel: "John Clavette's LinkedIn profile is coming soon",
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/john-clavette-57a67167/",
+    ariaLabel: "Visit John Clavette's LinkedIn profile",
   },
 ];
 
@@ -58,18 +60,18 @@ export function Journey() {
           <article className="craft-card grid gap-6 sm:grid-cols-[minmax(0,0.7fr)_1fr] sm:items-center lg:col-span-2">
             <figure>
               <div
-                aria-label="Future portrait photo of John Clavette"
-                className="flex aspect-[4/3] min-h-[180px] items-center justify-center overflow-hidden rounded-sm border border-bone/10 bg-[linear-gradient(145deg,#28221c_0%,#20343a_55%,#12100e_100%)] p-4 shadow-inset"
-                role="img"
+                className="relative aspect-[4/3] min-h-[180px] overflow-hidden rounded-sm border border-bone/10 bg-[linear-gradient(145deg,#28221c_0%,#20343a_55%,#12100e_100%)] shadow-inset"
               >
-                <div className="flex h-full w-full items-center justify-center rounded-sm border border-copper/30 bg-charcoal/55 text-center">
-                  <span className="text-xs font-black uppercase tracking-[0.18em] text-copper-bright">
-                    Photo Coming Soon
-                  </span>
-                </div>
+                <Image
+                  alt="Portrait of John Clavette"
+                  className="object-contain"
+                  fill
+                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 40vw, 100vw"
+                  src="/images/john-clavette-profile.jpeg"
+                />
               </div>
               <figcaption className="sr-only">
-                Future portrait photo of John Clavette.
+                Portrait of John Clavette.
               </figcaption>
             </figure>
             <div>

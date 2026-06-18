@@ -526,7 +526,7 @@ body {
 
 .header-maker-mark-guides path,
 .header-maker-mark-guides circle {
-  animation: header-maker-mark-guides 8s ease-in-out infinite;
+  animation: header-maker-mark-guides 10s ease-in-out infinite;
   stroke: rgba(244, 234, 216, 0.32);
   stroke-dasharray: 900;
   stroke-dashoffset: 900;
@@ -536,7 +536,7 @@ body {
 }
 
 .header-maker-mark-construction path {
-  animation: header-maker-mark-construction 8s ease-in-out infinite;
+  animation: header-maker-mark-construction 10s ease-in-out infinite;
   stroke: rgba(226, 149, 75, 0.58);
   stroke-dasharray: 900;
   stroke-dashoffset: 900;
@@ -546,7 +546,6 @@ body {
 }
 
 .header-maker-mark-final path {
-  animation: header-maker-mark-final 8s ease-in-out infinite;
   filter: url("#headerMarkGlow");
   stroke: url("#headerMarkCopperLine");
   stroke-dasharray: 900;
@@ -556,7 +555,16 @@ body {
   stroke-width: 18;
 }
 
+.header-maker-mark-final .header-maker-mark-j {
+  animation: header-maker-mark-j 10s ease-in-out infinite;
+}
+
+.header-maker-mark-final .header-maker-mark-c {
+  animation: header-maker-mark-c 10s ease-in-out infinite;
+}
+
 .header-maker-mark-final .header-maker-mark-baseline {
+  animation: header-maker-mark-baseline 10s ease-in-out infinite;
   stroke: rgba(244, 234, 216, 0.42);
   stroke-width: 6;
 }
@@ -774,12 +782,12 @@ body {
 @keyframes header-maker-mark-guides {
   0%,
   100% {
-    opacity: 0.18;
-    stroke-dashoffset: 520;
+    opacity: 0.2;
+    stroke-dashoffset: 420;
   }
 
-  3%,
-  34% {
+  10%,
+  38% {
     opacity: 0.34;
     stroke-dashoffset: 0;
   }
@@ -792,13 +800,13 @@ body {
 
 @keyframes header-maker-mark-construction {
   0%,
-  2% {
-    opacity: 0.16;
+  4% {
+    opacity: 0.14;
     stroke-dashoffset: 650;
   }
 
-  9%,
-  42% {
+  26%,
+  48% {
     opacity: 0.58;
     stroke-dashoffset: 0;
   }
@@ -810,21 +818,59 @@ body {
   }
 }
 
-@keyframes header-maker-mark-final {
+@keyframes header-maker-mark-j {
   0%,
-  2% {
-    opacity: 0.35;
-    stroke-dashoffset: 520;
+  4% {
+    opacity: 0.26;
+    stroke-dashoffset: 640;
   }
 
-  12%,
-  84% {
+  24%,
+  82% {
     opacity: 1;
     stroke-dashoffset: 0;
   }
 
   100% {
     opacity: 0.68;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes header-maker-mark-c {
+  0%,
+  14% {
+    opacity: 0.18;
+    stroke-dashoffset: 760;
+  }
+
+  38%,
+  82% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    opacity: 0.68;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes header-maker-mark-baseline {
+  0%,
+  30% {
+    opacity: 0.18;
+    stroke-dashoffset: 500;
+  }
+
+  48%,
+  84% {
+    opacity: 0.58;
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    opacity: 0.32;
     stroke-dashoffset: 0;
   }
 }

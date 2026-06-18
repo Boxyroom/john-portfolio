@@ -57,8 +57,8 @@ function BrandMark() {
         </g>
 
         <g className="header-maker-mark-final" fill="none">
-          <path d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214" />
-          <path d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230" />
+          <path className="header-maker-mark-j" d="M330 92 V212 C330 248 304 268 274 258 C252 250 242 232 246 214" />
+          <path className="header-maker-mark-c" d="M508 118 C476 88 418 94 392 134 C366 184 386 246 440 260 C476 268 504 252 520 230" />
           <path className="header-maker-mark-baseline" d="M236 288 H532" />
         </g>
       </svg>
