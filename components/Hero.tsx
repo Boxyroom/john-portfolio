@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type TouchEvent as ReactTouchEvent,
 } from "react";
+import { useContactModal } from "@/components/ContactModal";
 import { SectionLink } from "@/components/SectionLink";
 const motionCards = [
   {
@@ -1028,6 +1029,7 @@ function PhysicsSpringShowcase() {
 }
 
 export function Hero() {
+  const { openContactModal } = useContactModal();
   const magneticButtonRef = useRef<HTMLButtonElement>(null);
   const scrollCarouselRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<HeroTab>("Effects");
@@ -1194,7 +1196,7 @@ export function Hero() {
     helloCenterInViewport < scrollViewportHeight * 0.92;
 
   return (
-    <section className="container-shell grid min-h-[calc(100vh-73px)] items-start gap-8 px-6 py-8 lg:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+    <section className="container-shell grid min-h-[calc(100vh-73px)] items-start gap-8 px-6 py-8 lg:min-h-0 lg:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
       <div className="lg:-mt-6">
         <p className="section-kicker mb-5">
           28 years building in the field. Now building in code.
@@ -1211,9 +1213,13 @@ export function Hero() {
           <SectionLink className="btn-primary" href="#projects">
             View projects
           </SectionLink>
-          <SectionLink className="btn-secondary" href="#contact">
-            Start a conversation
-          </SectionLink>
+          <button
+            className="btn-secondary"
+            onClick={(event) => openContactModal(event.currentTarget)}
+            type="button"
+          >
+            Let's Talk
+          </button>
         </div>
       </div>
 

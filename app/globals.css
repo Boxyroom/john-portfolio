@@ -507,6 +507,60 @@ body {
   opacity: 0;
 }
 
+.header-maker-mark {
+  background:
+    linear-gradient(rgba(244, 234, 216, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244, 234, 216, 0.045) 1px, transparent 1px),
+    radial-gradient(
+      circle at 50% 48%,
+      rgba(200, 116, 52, 0.16),
+      transparent 68%
+    ),
+    #1b1713;
+  background-size:
+    8px 8px,
+    8px 8px,
+    auto,
+    auto;
+}
+
+.header-maker-mark-guides path,
+.header-maker-mark-guides circle {
+  animation: header-maker-mark-guides 8s ease-in-out infinite;
+  stroke: rgba(244, 234, 216, 0.32);
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 3.2;
+}
+
+.header-maker-mark-construction path {
+  animation: header-maker-mark-construction 8s ease-in-out infinite;
+  stroke: rgba(226, 149, 75, 0.58);
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 4.4;
+}
+
+.header-maker-mark-final path {
+  animation: header-maker-mark-final 8s ease-in-out infinite;
+  filter: url("#headerMarkGlow");
+  stroke: url("#headerMarkCopperLine");
+  stroke-dasharray: 900;
+  stroke-dashoffset: 900;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 18;
+}
+
+.header-maker-mark-final .header-maker-mark-baseline {
+  stroke: rgba(244, 234, 216, 0.42);
+  stroke-width: 6;
+}
+
 .physics-lab {
   background:
     linear-gradient(rgba(244, 234, 216, 0.028) 1px, transparent 1px),
@@ -714,6 +768,84 @@ body {
   100% {
     opacity: 0;
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes header-maker-mark-guides {
+  0%,
+  100% {
+    opacity: 0.18;
+    stroke-dashoffset: 520;
+  }
+
+  3%,
+  34% {
+    opacity: 0.34;
+    stroke-dashoffset: 0;
+  }
+
+  66% {
+    opacity: 0.12;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes header-maker-mark-construction {
+  0%,
+  2% {
+    opacity: 0.16;
+    stroke-dashoffset: 650;
+  }
+
+  9%,
+  42% {
+    opacity: 0.58;
+    stroke-dashoffset: 0;
+  }
+
+  72%,
+  100% {
+    opacity: 0.1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes header-maker-mark-final {
+  0%,
+  2% {
+    opacity: 0.35;
+    stroke-dashoffset: 520;
+  }
+
+  12%,
+  84% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    opacity: 0.68;
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header-maker-mark-guides path,
+  .header-maker-mark-guides circle,
+  .header-maker-mark-construction path,
+  .header-maker-mark-final path {
+    animation: none;
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+
+  .header-maker-mark-guides path,
+  .header-maker-mark-guides circle {
+    opacity: 0.18;
+  }
+
+  .header-maker-mark-construction path {
+    opacity: 0.34;
   }
 }
 

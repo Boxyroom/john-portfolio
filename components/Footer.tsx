@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="border-t border-bone/10 px-6 py-8 lg:px-8">
       <div className="container-shell flex flex-col gap-4 text-sm text-bone-muted sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 Modern Builder. Crafted with Next.js.</p>
+        <p>© 2026 John Clavette. Built with Next.js and TypeScript.</p>
         <div className="flex gap-5">
           <SectionLink className="hover:text-copper-bright" href="#projects">
             Work
